@@ -14,6 +14,7 @@ Assets/AssetStoreTools*
 
 # Visual Studio / Rider / VS Code
 .vs/
+.vscode/
 .idea/
 .gradle/
 ExportedObj/
@@ -21,6 +22,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
