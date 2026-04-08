@@ -92,13 +92,13 @@ public class Tower : MonoBehaviour
         switch (targetPriority)
         {
             case TargetPriority.First:
-                return enemiesInRange.OrderBy(e => e.trackProgress).FirstOrDefault();
-            case TargetPriority.Last:
                 return enemiesInRange.OrderByDescending(e => e.trackProgress).FirstOrDefault();
+            case TargetPriority.Last:
+                return enemiesInRange.OrderBy(e => e.trackProgress).FirstOrDefault();
             case TargetPriority.Close:
                 return enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).FirstOrDefault();
             case TargetPriority.Strong:
-                return null; // DO LATER
+                return enemiesInRange.OrderByDescending(e => e.maxHP).FirstOrDefault();
         }
 
         return null;

@@ -38,6 +38,8 @@ public class Enemy : MonoBehaviour
     public void Update()
     {
         trackProgress += spd * Time.deltaTime;
+
+        transform.Translate(Vector3.left * spd * Time.deltaTime);
     }
 
 
