@@ -59,7 +59,7 @@ public class Tower : MonoBehaviour
     protected List<Effect> activeEffects;
 
 
-    private void Start()
+    protected virtual void Start()
     {
         enemiesInRange = new List<Enemy>();
         attackArea = GetComponent<CircleCollider2D>();
@@ -70,7 +70,7 @@ public class Tower : MonoBehaviour
     }
 
 
-    private void Update()
+    protected virtual void Update()
     {
         attackCooldown -= Time.deltaTime;
         if (attackCooldown > 0f)
@@ -98,7 +98,7 @@ public class Tower : MonoBehaviour
     }
 
 
-    private Enemy GetTarget()
+    protected virtual Enemy GetTarget()
     {
         switch (targetPriority)
         {
@@ -116,7 +116,7 @@ public class Tower : MonoBehaviour
     }
 
 
-    private void Attack(Enemy target)
+    protected virtual void Attack(Enemy target)
     {
         target.TakeDamage(damage, damageType);
     }
