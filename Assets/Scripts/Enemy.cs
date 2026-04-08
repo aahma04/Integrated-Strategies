@@ -21,6 +21,9 @@ public class Enemy : MonoBehaviour
     public float skillDmg = 1f;
     public bool flying = false; 
 
+    public float trackProgress = 0f; // Potentially temporary, stores how far along the path the enemy is for targeting
+
+
     public void Start()
     {
         currentHP = maxHP;
@@ -30,6 +33,13 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+
+    public void Update()
+    {
+        trackProgress += spd * Time.deltaTime;
+    }
+
 
     public void TakeDamage(float amount)
     {
@@ -50,7 +60,5 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-
     }
 }

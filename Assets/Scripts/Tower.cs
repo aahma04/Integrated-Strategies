@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Tower : MonoBehaviour
 {
@@ -28,10 +30,28 @@ public class Tower : MonoBehaviour
     [Header("Type")]
     public string attackType; //"Single" , "AOE", etc. might be changed later
 
+    private enum TargetPriority
+    {
+        First,
+        Last,
+        Close,
+        Strong
+    }
+
+    private CircleCollider2D attackArea;
+
+    private List<Enemy> enemiesInRange;
+    private TargetPriority targetPriority = TargetPriority.First;
+
+
     private void Start()
     {
-        
+        enemiesInRange = new List<Enemy>();
+        attackArea = GetComponent<CircleCollider2D>();
+
+        attackArea.radius = range;
     }
+
 
     private void Update()
     {
@@ -41,7 +61,7 @@ public class Tower : MonoBehaviour
             return;
         }
 
-        Enemy target = FindFirstEnemyInRange();
+        Enemy target = GetTarget();
         if (target != null)
         {
             Attack(target);
@@ -49,23 +69,70 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private Enemy FindFirstEnemyInRange()
-    {
-        Enemy[] enemies = FindObjectsOfType<Enemy>();
 
-        foreach (Enemy enemy in enemies)
+    // OLD
+    // private Enemy FindFirstEnemyInRange()
+    // {
+    //     Enemy[] enemies = FindObjectsOfType<Enemy>();
+
+    //     foreach (Enemy enemy in enemies)
+    //     {
+    //         if (enemy == null)
+    //         continue;
+    //         float distance = Vector2.Distance(transform.position, enemy.transform.position);
+    //         if (distance <= range)
+    //             return enemy;
+    //     }
+    //     return null;
+    // }
+
+
+    private Enemy GetTarget()
+    {
+        switch (targetPriority)
         {
-            if (enemy == null)
-            continue;
-            float distance = Vector2.Distance(transform.position, enemy.transform.position);
-            if (distance <= range)
-                return enemy;
+            case TargetPriority.First:
+                return enemiesInRange.OrderBy(e => e.trackProgress).FirstOrDefault();
+            case TargetPriority.Last:
+                return enemiesInRange.OrderByDescending(e => e.trackProgress).FirstOrDefault();
+            case TargetPriority.Close:
+                return enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).FirstOrDefault();
+            case TargetPriority.Strong:
+                return null; // DO LATER
         }
+
         return null;
     }
+
 
     private void Attack(Enemy target)
     {
         target.TakeDamage(damage);
+    }
+
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            Enemy enemy = other.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemiesInRange.Add(enemy);
+            }
+        }
+    }
+
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            Enemy enemy = other.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemiesInRange.Remove(enemy);
+            }
+        }
     }
 }
