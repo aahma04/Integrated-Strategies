@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1896237748035654251}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -114, y: 263, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 25, y: 50, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -101,6 +101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2782482560326872736}
   - component: {fileID: 8327784950936420786}
+  - component: {fileID: 8524529375353819836}
   m_Layer: 0
   m_Name: TowerPrefab
   m_TagString: Untagged
@@ -136,9 +137,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42a6675bb87c2ce4aa911628f45887e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower
-  towerName: template
+  towerName: 
+  towerType: 
+  desc: 
   maxHP: 10
+  dmgRed: 0
+  defense: 0
   damage: 1
-  attackRate: 1
+  atkSpd: 1
   range: 10
+  attackCooldown: 0
+  dmgType: 
+  projType: 
+  highTile: 1
+  lowTile: 1
+  skillCooldown: 1
+  skillDmg: 10
   attackType: 
+--- !u!58 &8524529375353819836
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8840116011609496742}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
