@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour
 {
@@ -10,18 +11,17 @@ public class Enemy : MonoBehaviour
     [Header("Basic Attributes")]
     public float maxHP = 10f;
     public float currentHP;
-    public float dmgRed = 0f;
+    public float damageReduction = 0f;
     public float defense = 0f;
     public float damage = 1f;
-    public float attackSpd = 1f;
-    public float spd = 1f;
-
-    [Header("Attack Info")]
-    public float skillCooldown = 1f;
-    public float skillDmg = 1f;
+    public float attackSpeed = 1f;
+    public float speed = 1f;
     public bool flying = false; 
+    public bool energyImmune = false;
 
     public float trackProgress = 0f; // Potentially temporary, stores how far along the path the enemy is for targeting
+
+    public List<Effect> activeEffects;
 
 
     public void Start()
@@ -37,17 +37,40 @@ public class Enemy : MonoBehaviour
 
     public void Update()
     {
-        trackProgress += spd * Time.deltaTime;
+        trackProgress += speed * Time.deltaTime;
 
-        transform.Translate(Vector3.left * spd * Time.deltaTime);
+        transform.Translate(Vector3.left * speed * Time.deltaTime);
+
+        foreach (Effect effect in activeEffects)
+        {
+            effect.ApplyEffect(this);
+
+            effect.duration -= Time.deltaTime;
+            if (effect.duration <= 0)
+            {
+                activeEffects.Remove(effect);
+            }
+        }
     }
 
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Tower.DamageType damageType)
     {
-        amount -= defense;
-        amount -= amount * (dmgRed/100);  
+        if (energyImmune && damageType == Tower.DamageType.Energy)
+        {
+            return;
+        }
+
+        if (damageType == Tower.DamageType.Physical)
+        {
+            amount -= defense;
+        }
         
+        if (damageType != Tower.DamageType.True)
+        {
+            amount -= amount * (damageReduction/100);  
+        }
+
         if (amount <= 0)
         {
             currentHP -= 1;
@@ -62,5 +85,11 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    
+    public void AddEffect(Effect effect)
+    {
+        activeEffects.Add(effect);
     }
 }
