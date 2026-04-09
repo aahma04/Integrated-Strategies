@@ -24,11 +24,11 @@ public class RapidFire : Tower
     }
 
 
-    private void Attack(Enemy[] target)
+    private void Attack(Enemy[] targets)
     {
-        foreach (Enemy enemy in target)
+        foreach (Enemy target in targets)
         {
-            enemy.TakeDamage(damage, damageType);
+            target.TakeDamage(damage, damageType, this);
         }
     }
 }

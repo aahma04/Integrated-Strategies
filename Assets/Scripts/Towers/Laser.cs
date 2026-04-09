@@ -4,9 +4,7 @@ public class Laser : Tower
 {
     private float damageAmp = 1f;
 
-    private Enemy currentTarget;
-
-    private void Attack(Enemy target)
+    protected override void Attack(Enemy target)
     {
         if (currentTarget != target)
         {
@@ -14,7 +12,7 @@ public class Laser : Tower
             currentTarget = target;
         }
 
-        target.TakeDamage(damage * damageAmp, damageType);
+        target.TakeDamage(damage * damageAmp, damageType, this);
 
         if (specialUnlocked)
         {

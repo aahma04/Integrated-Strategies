@@ -7,26 +7,26 @@ public class Tower : MonoBehaviour
     [Header("Basic Information")]
     public string towerName;
     public string towerType;
-    public string desc;
+    public string description;
 
     [Header("Basic Attributes")]
-    public float maxHP = 10f;
-    public float damageReduction = 0f; //Percentage
-    public float defense = 0f; //Flat
+    // public float maxHP = 10f;
+    // public float damageReduction = 0f; //Percentage
+    // public float defense = 0f; //Flat
     public float damage = 1f;
     public float attackSpeed = 1f;
     public float range = 0f;
-    public float attackCooldown = 0f; //works as an original spawn delay + helps incorporate atkSpd
+    protected float attackCooldown = 0f; //works as an original spawn delay + helps incorporate atkSpd
 
     [Header("Attack Info")]
     public DamageType damageType;
     public ProjectileType projectileType;
-    public float skillCooldown = 1f;
-    public float skillDmg = 10f;
+    // public float skillCooldown = 1f;
+    // public float skillDmg = 10f;
 
 
-    [Header("Type")]
-    public string attackType; //"Single" , "AOE", etc. might be changed later
+    // [Header("Type")]
+    // public string attackType; //"Single" , "AOE", etc. might be changed later
 
     public enum TargetPriority
     {
@@ -51,7 +51,7 @@ public class Tower : MonoBehaviour
 
     private CircleCollider2D attackArea;
 
-    protected List<Enemy> enemiesInRange;
+    public List<Enemy> enemiesInRange;
     protected TargetPriority targetPriority = TargetPriority.First;
 
     protected bool specialUnlocked = false;
@@ -118,7 +118,7 @@ public class Tower : MonoBehaviour
 
     protected virtual void Attack(Enemy target)
     {
-        target.TakeDamage(damage, damageType);
+        target.TakeDamage(damage, damageType, this);
     }
 
 
