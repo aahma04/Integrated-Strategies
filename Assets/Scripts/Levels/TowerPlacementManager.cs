@@ -135,6 +135,7 @@ public class TowerPlacementManager : MonoBehaviour
 
         towerInstance.Initialize(gridPos, this);
         placedTowers[gridPos] = towerInstance;
+        ClearSelection();
     }
 
     void CreateRangePreview()
