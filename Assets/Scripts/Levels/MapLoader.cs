@@ -749,6 +749,7 @@ public class MapLoader : MonoBehaviour
         if (gameOverText != null)
         {
             gameOverText.SetActive(true);
+            LevelSequence.currentLevelIndex = 0;
             StartCoroutine(ExitAfterDelay());
         }
 
