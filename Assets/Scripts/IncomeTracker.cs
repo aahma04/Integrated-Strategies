@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class IncomeTracker
+public class IncomeTracker : MonoBehaviour
 {
     public int coinsEarnedSoFar = 1000;
     public int xpEarnedSoFar;
