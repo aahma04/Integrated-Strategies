@@ -33,6 +33,7 @@ public class LevelSequence : MonoBehaviour
             StartCoroutine(ExitAfterDelay());
         }
 
+        Debug.Log(currentLevelIndex + " / " + levels.Length);
         mapLoader.mapFile = levels[currentLevelIndex];
     }
 
