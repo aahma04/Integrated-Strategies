@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour
@@ -32,6 +33,8 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        activeEffects = new List<Effect>();
     }
 
 
@@ -44,17 +47,11 @@ public class Enemy : MonoBehaviour
         foreach (Effect effect in activeEffects)
         {
             effect.ApplyEffect(this);
-
-            effect.duration -= Time.deltaTime;
-            if (effect.duration <= 0)
-            {
-                activeEffects.Remove(effect);
-            }
         }
     }
 
 
-    public void TakeDamage(float amount, Tower.DamageType damageType)
+    public void TakeDamage(float amount, Tower.DamageType damageType, Tower source)
     {
         if (energyImmune && damageType == Tower.DamageType.Energy)
         {
@@ -83,6 +80,7 @@ public class Enemy : MonoBehaviour
 
         if (currentHP <=0)
         {
+            source.enemiesInRange.Remove(this);
             Destroy(gameObject);
         }
     }
