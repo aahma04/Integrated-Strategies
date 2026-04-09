@@ -8,6 +8,7 @@ public class Tower : MonoBehaviour
     public string towerName;
     public string towerType;
     public string description;
+    public int cost;
 
     [Header("Basic Attributes")]
     // public float maxHP = 10f;
