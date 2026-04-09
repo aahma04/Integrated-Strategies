@@ -1766,7 +1766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 647fe1fe52eb31047bf139acb28ef359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapLoader
-  mapFile: {fileID: 4900000, guid: 47a16a9dd8543f74f98e8cb8fe77b7bd, type: 3}
+  mapFile: {fileID: 4900000, guid: 09689f59d106c5a4fa99563684c14ccb, type: 3}
   grassPrefab: {fileID: 821100780676711914, guid: 87eb23146e35e6d489a25840bdf67a21, type: 3}
   pathPrefab: {fileID: 821100780676711914, guid: 4cdfd7d9e1762aa429a804d8872c5855, type: 3}
   startPrefab: {fileID: 821100780676711914, guid: 54506e542f8a7e340b38e80d374baa93, type: 3}
@@ -2836,7 +2836,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1542298960
 RectTransform:
   m_ObjectHideFlags: 0

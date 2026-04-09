@@ -32,9 +32,11 @@ public class Enemy : MonoBehaviour
 
     private MapLoader mapLoader;
     private char targetEndSymbol;
+    private IncomeTracker incomeTracker;
 
     public void Start()
     {
+        incomeTracker = FindAnyObjectByType<IncomeTracker>();
         currentHP = maxHP;
 
         if (currentHP <= 0)
@@ -157,6 +159,14 @@ public class Enemy : MonoBehaviour
                 source.enemiesInRange.Remove(this);
             }
 
+            if (incomeTracker != null)
+            {
+                incomeTracker.currentMoney += 25;
+            }
+            else
+            {
+                Debug.LogWarning("IncomeTracker not found in scene.");
+            }
             Destroy(gameObject);
         }
     }

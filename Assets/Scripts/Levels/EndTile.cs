@@ -1,9 +1,15 @@
 using UnityEngine;
+using TMPro;
 
 public class EndTile : MonoBehaviour
 {
     public int lives = 3;
+    public TMP_Text livesText;
 
+    void Update()
+    {
+        livesText.text = lives.ToString();
+    }
 
     public void TakeDamage(int amount)
     {

@@ -1,0 +1,17 @@
+#Level 3
+
+[start_end_pairs]
+S=A
+T=B
+
+[spawns]
+S:normal:2,break:2,sprinter:2,break:2,energy shielder:1,drone:2,break:3,normal:3,break:2,energy shielder:1,break:2,tank:3,drone:3,sprinter:3
+T:break:4,normal:3,break:2,drone:2,break:2,energy shielder:1,normal:2,break:3,sprinter:3,break:2,energy shielder:1,break:2,tank:3,drone:3,sprinter:3
+
+[grid]
+..........
+S########A
+..........
+..........
+T########B
+..........
