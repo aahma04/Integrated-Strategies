@@ -1,0 +1,23 @@
+// any line that starts with a "//" will be considered a comment and ignored
+// comments can only be added to the top of the file
+// use this file as a template for the rest of the levels
+// Waves will not be implemented yet
+// Enemy spawn customization won't be implemented yet, only Normal enemies will be used
+// Start-end pairs will be made as well as multiple start - one end pairs. Can have multiple of each in game. can spawn different number
+// of normal at each start, and they will travel to their corresponding end
+// BFS WILL BE USED FOR THE TIME BEING
+
+#Level 1
+
+[start_end_pairs]
+S=E
+
+[spawns]
+S:10
+
+[grid]
+..........
+..........
+.S######E.
+..........
+..........
