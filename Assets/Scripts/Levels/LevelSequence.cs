@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelSequence : MonoBehaviour
 {
@@ -28,10 +30,16 @@ public class LevelSequence : MonoBehaviour
 
         if (currentLevelIndex < 0 || currentLevelIndex >= levels.Length)
         {
-            currentLevelIndex = 0;
+            StartCoroutine(ExitAfterDelay());
         }
 
         mapLoader.mapFile = levels[currentLevelIndex];
+    }
+
+    public IEnumerator ExitAfterDelay()
+    {
+        yield return new WaitForSeconds(5);
+        SceneManager.LoadScene("MainMenu");
     }
 
     public static void ResetToFirstLevel()

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class EnemyPrefabEntry
@@ -710,7 +711,7 @@ public class MapLoader : MonoBehaviour
         if (levelSequence != null && LevelSequence.currentLevelIndex >= levelSequence.levels.Length)
         {
             Debug.Log("All levels complete.");
-            LevelSequence.currentLevelIndex = 0;
+            StartCoroutine(ExitAfterDelay());
             return;
         }
 
@@ -736,13 +737,19 @@ public class MapLoader : MonoBehaviour
         }
     }
 
+    public IEnumerator ExitAfterDelay()
+    {
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene("Mainmenu");
+    }
+
     public void GameOver()
     {
-        Time.timeScale = 0f;
 
         if (gameOverText != null)
         {
             gameOverText.SetActive(true);
+            StartCoroutine(ExitAfterDelay());
         }
 
         enabled = false;
