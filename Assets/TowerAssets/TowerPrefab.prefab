@@ -139,21 +139,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower
   towerName: 
   towerType: 
-  desc: 
-  maxHP: 10
-  dmgRed: 0
-  defense: 0
+  description: 
   damage: 1
-  atkSpd: 1
+  attackSpeed: 1
   range: 10
-  attackCooldown: 0
-  dmgType: 
-  projType: 
-  highTile: 1
-  lowTile: 1
-  skillCooldown: 1
-  skillDmg: 10
-  attackType: 
+  damageType: 0
+  projectileType: 0
+  damageUpgradeCosts: 
+  attackSpeedUpgradeCosts: 
+  rangeUpgradeCosts: 
+  damageUpgradeLevel: 0
+  attackSpeedUpgradeLevel: 0
+  rangeUpgradeLevel: 0
+  specialCost: 0
+  specialUnlocked: 0
+  enemiesInRange: []
 --- !u!58 &8524529375353819836
 CircleCollider2D:
   m_ObjectHideFlags: 0
