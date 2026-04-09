@@ -13,16 +13,16 @@ public class Slow : Tower
     private Enemy currentTarget;
 
 
-    protected override void Start()
-    {
-        base.Start();
-        attackNode = transform.Find("AttackNode").gameObject;
-        attackCollider = attackNode.GetComponent<CircleCollider2D>();
-        attackCollider.radius = slowRadius;
+    // protected override void Start()
+    // {
+    //     base.Start();
+    //     attackNode = transform.Find("AttackNode").gameObject;
+    //     attackCollider = attackNode.GetComponent<CircleCollider2D>();
+    //     attackCollider.radius = slowRadius;
 
-        specialUnlocked = true; // for testing
-        attackNodeScript = attackNode.GetComponent<AttackNode>();
-    }
+    //     specialUnlocked = true; // for testing
+    //     attackNodeScript = attackNode.GetComponent<AttackNode>();
+    // }
 
     // protected override void Update()
     // {

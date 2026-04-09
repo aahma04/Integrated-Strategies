@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class TowerInspector : MonoBehaviour
 {
+
+    public IncomeTracker incomeTracker;
+    public TowerPlacementManager placementManager;
+
     public GameObject towerInspectorPanel;
     private GameObject towerNameText;
     private GameObject towerDescriptionText;
@@ -102,7 +106,13 @@ public class TowerInspector : MonoBehaviour
     {
         if (selectedTower != null)
         {
-            // Implement money check and whatnot here
+            if (incomeTracker.currentMoney < selectedTower.damageUpgradeCosts[selectedTower.damageUpgradeLevel])
+            {
+                return;
+            }
+            incomeTracker.currentMoney -= selectedTower.damageUpgradeCosts[selectedTower.damageUpgradeLevel];
+            selectedTower.cost += selectedTower.damageUpgradeCosts[selectedTower.damageUpgradeLevel];
+            selectedTower.damage *= 1.1f; // Replace with array in tower class later
             selectedTower.damageUpgradeLevel++;
             RefreshText();
         }
@@ -112,6 +122,13 @@ public class TowerInspector : MonoBehaviour
     {
         if (selectedTower != null)
         {
+            if (incomeTracker.currentMoney < selectedTower.attackSpeedUpgradeCosts[selectedTower.attackSpeedUpgradeLevel])
+            {
+                return;
+            }
+            incomeTracker.currentMoney -= selectedTower.attackSpeedUpgradeCosts[selectedTower.attackSpeedUpgradeLevel];
+            selectedTower.cost += selectedTower.attackSpeedUpgradeCosts[selectedTower.attackSpeedUpgradeLevel];
+            selectedTower.attackSpeed *= 1.1f;
             selectedTower.attackSpeedUpgradeLevel++;
             RefreshText();
         }
@@ -121,6 +138,13 @@ public class TowerInspector : MonoBehaviour
     {
         if (selectedTower != null)
         {
+            if (incomeTracker.currentMoney < selectedTower.rangeUpgradeCosts[selectedTower.rangeUpgradeLevel])
+            {
+                return;
+            }
+            incomeTracker.currentMoney -= selectedTower.rangeUpgradeCosts[selectedTower.rangeUpgradeLevel];
+            selectedTower.cost += selectedTower.rangeUpgradeCosts[selectedTower.rangeUpgradeLevel];
+            selectedTower.range *= 1.1f;
             selectedTower.rangeUpgradeLevel++;
             RefreshText();
         }
@@ -130,6 +154,12 @@ public class TowerInspector : MonoBehaviour
     {
         if (selectedTower != null)
         {
+            if (incomeTracker.currentMoney < selectedTower.specialCost)
+            {
+                return;
+            }
+            incomeTracker.currentMoney -= selectedTower.specialCost;
+            selectedTower.cost += selectedTower.specialCost;
             selectedTower.specialUnlocked = true;
             RefreshText();
         }
@@ -139,8 +169,10 @@ public class TowerInspector : MonoBehaviour
     {
         if (selectedTower != null)
         {
-            DeselectTower();
+            incomeTracker.currentMoney += (int)(selectedTower.cost * 0.7f);
+            placementManager.RemoveTower(selectedTower.GetComponent<TowerInstance>().GridPosition);
             Destroy(selectedTower.gameObject);
+            DeselectTower();
         }
     }
 }
