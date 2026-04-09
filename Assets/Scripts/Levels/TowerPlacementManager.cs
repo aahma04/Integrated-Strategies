@@ -14,6 +14,7 @@ public class TowerPlacementManager : MonoBehaviour
     [Header("References")]
     public MapLoader mapLoader;
     public Camera mainCamera;
+    public TowerInspector towerInspector;
 
     [Header("Tower Prefabs")]
     public List<TowerPrefabEntry> towerPrefabs = new();
@@ -131,9 +132,10 @@ public class TowerPlacementManager : MonoBehaviour
         if (towerInstance == null)
         {
             towerInstance = placedTower.AddComponent<TowerInstance>();
+            towerInspector.SelectTower(placedTower.GetComponent<Tower>());
         }
 
-        towerInstance.Initialize(gridPos, this);
+        towerInstance.Initialize(gridPos, towerInspector);
         placedTowers[gridPos] = towerInstance;
         ClearSelection();
     }

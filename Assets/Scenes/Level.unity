@@ -4785,6 +4785,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TowerPlacementManager
   mapLoader: {fileID: 1129064180}
   mainCamera: {fileID: 1370791164}
+  towerInspector: {fileID: 239585518}
   towerPrefabs:
   - towerName: Rapid Fire
     prefab: {fileID: 8840116011609496742, guid: bbc732f0c085aa647a7ae2f7fe6f858d, type: 3}

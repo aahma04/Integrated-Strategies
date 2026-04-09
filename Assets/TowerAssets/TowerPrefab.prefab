@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 560701343019116284}
   - component: {fileID: 801789815180494291}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 2782482560326872736}
   - component: {fileID: 8327784950936420786}
   - component: {fileID: 8524529375353819836}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: TowerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,6 +140,7 @@ MonoBehaviour:
   towerName: 
   towerType: 
   description: 
+  cost: 0
   damage: 1
   attackSpeed: 1
   range: 10

@@ -154,7 +154,7 @@ public class Enemy : MonoBehaviour
         {
             if (source != null)
             {
-                source.enemiesInRange.Remove(this);
+                source.attackRange.enemiesInRange.Remove(this);
             }
 
             Destroy(gameObject);
