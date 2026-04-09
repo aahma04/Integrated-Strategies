@@ -4,6 +4,8 @@ public class Laser : Tower
 {
     private float damageAmp = 1f;
 
+    private Enemy currentTarget;
+
     protected override void Attack(Enemy target)
     {
         if (currentTarget != target)
