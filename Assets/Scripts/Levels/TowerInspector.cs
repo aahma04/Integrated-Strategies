@@ -17,7 +17,7 @@ public class TowerInspector : MonoBehaviour
 
     private void Start()
     {
-        towerInspectorPanel.SetActive(false);
+        towerInspectorPanel.SetActive(true);
         towerNameText = towerInspectorPanel.transform.Find("TowerName").gameObject;
         towerDescriptionText = towerInspectorPanel.transform.Find("TowerDescription").gameObject;
         towerStatsText = towerInspectorPanel.transform.Find("TowerStats").gameObject;
@@ -26,6 +26,7 @@ public class TowerInspector : MonoBehaviour
         rangeUpgradeButton = towerInspectorPanel.transform.Find("RangeUpgrade").gameObject;
         specialUpgradeButton = towerInspectorPanel.transform.Find("SpecialUnlock").gameObject;
         sellButton = towerInspectorPanel.transform.Find("SellTower").gameObject;
+        DeselectTower();
     }
     
     public void SelectTower(Tower tower)
