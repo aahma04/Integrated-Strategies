@@ -52,14 +52,13 @@ MonoBehaviour:
   enemyDesc: 
   maxHP: 10
   currentHP: 0
-  dmgRed: 0
+  damageReduction: 0
   defense: 0
   damage: 1
-  attackSpd: 1
-  spd: 1
-  skillCooldown: 1
-  skillDmg: 1
+  attackSpeed: 1
+  speed: 1
   flying: 0
+  energyImmune: 0
   trackProgress: 0
 --- !u!50 &1409079283449561984
 Rigidbody2D:

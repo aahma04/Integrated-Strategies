@@ -1,0 +1,439 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class MapLoader : MonoBehaviour
+{
+    [Header("Map File")]
+    public TextAsset mapFile;
+
+    [Header("Prefabs")]
+    public GameObject grassPrefab;
+    public GameObject pathPrefab;
+    public GameObject startPrefab;
+    public GameObject endPrefab;
+
+    [Header("Enemy Prefabs")]
+    public GameObject enemyPrefab;
+
+    public float tileSize = 1f;
+
+    [Header("Camera")]
+    public Camera mainCamera;
+    public float cameraPadding = 1f;
+
+    private Dictionary<char, char> startToEnd = new();
+    private Dictionary<char, int> spawnCounts = new();
+
+    private Dictionary<char, Vector2Int> startPositions = new();
+    private Dictionary<char, Vector2Int> endPositions = new();
+
+    private Dictionary<char, List<Vector3>> pathsByStart = new();
+
+    private char[,] grid;
+
+    void Start()
+    {
+        LoadMap();
+    }
+
+    void LoadMap()
+    {
+        if (mapFile == null)
+        {
+            Debug.LogError("No map file assigned.");
+            return;
+        }
+
+        string[] lines = mapFile.text.Split('\n');
+
+        string section = "";
+        List<string> gridLines = new();
+
+        foreach (string rawLine in lines)
+        {
+            string line = rawLine.Trim();
+
+            // stop reading once grid section hits first blank line
+            if (section == "[grid]" && string.IsNullOrEmpty(line))
+            {
+                break;
+            }
+
+            if (string.IsNullOrEmpty(line)) continue;
+
+            // ignore comments
+            if (line.StartsWith("//")) continue;
+
+            // ignore title line like #Level 1
+            if (line.StartsWith("#")) continue;
+
+            if (line.StartsWith("["))
+            {
+                section = line;
+                continue;
+            }
+
+            switch (section)
+            {
+                case "[start_end_pairs]":
+                    ParseStartEnd(line);
+                    break;
+
+                case "[spawns]":
+                    ParseSpawns(line);
+                    break;
+
+                case "[grid]":
+                    gridLines.Add(line);
+                    break;
+            }
+        }
+
+        if (gridLines.Count == 0)
+        {
+            Debug.LogError("No grid lines were found in the map file.");
+            return;
+        }
+
+        BuildGrid(gridLines);
+        GenerateAllPaths();
+        PositionCamera();
+        SpawnTiles();
+    }
+
+    void ParseStartEnd(string line)
+    {
+        // supports:
+        // S=E
+        // AB=C
+        // GHI=K
+
+        string[] parts = line.Split('=');
+
+        if (parts.Length != 2 || string.IsNullOrEmpty(parts[0]) || string.IsNullOrEmpty(parts[1]))
+        {
+            Debug.LogError("Invalid start_end_pairs line: " + line);
+            return;
+        }
+
+        string starts = parts[0].Trim();
+        char end = parts[1].Trim()[0];
+
+        foreach (char start in starts)
+        {
+            startToEnd[start] = end;
+        }
+    }
+
+    void ParseSpawns(string line)
+    {
+        // Example:
+        // S:10
+
+        string[] parts = line.Split(':');
+
+        if (parts.Length != 2 || string.IsNullOrEmpty(parts[0]) || string.IsNullOrEmpty(parts[1]))
+        {
+            Debug.LogError("Invalid spawns line: " + line);
+            return;
+        }
+
+        char start = parts[0].Trim()[0];
+
+        if (!int.TryParse(parts[1].Trim(), out int count))
+        {
+            Debug.LogError("Invalid spawn count in line: " + line);
+            return;
+        }
+
+        spawnCounts[start] = count;
+    }
+
+    void BuildGrid(List<string> gridLines)
+    {
+        int height = gridLines.Count;
+        int width = gridLines[0].Length;
+
+        for (int i = 1; i < gridLines.Count; i++)
+        {
+            if (gridLines[i].Length != width)
+            {
+                Debug.LogError("Grid rows are not all the same length.");
+                return;
+            }
+        }
+
+        grid = new char[width, height];
+        startPositions.Clear();
+        endPositions.Clear();
+
+        for (int y = 0; y < height; y++)
+        {
+            string line = gridLines[height - 1 - y]; // flip Y so bottom row is y = 0
+
+            for (int x = 0; x < width; x++)
+            {
+                char c = line[x];
+                grid[x, y] = c;
+
+                if (char.IsUpper(c))
+                {
+                    if (startToEnd.ContainsKey(c))
+                    {
+                        startPositions[c] = new Vector2Int(x, y);
+                    }
+                    else
+                    {
+                        endPositions[c] = new Vector2Int(x, y);
+                    }
+                }
+            }
+        }
+    }
+
+    void SpawnTiles()
+    {
+        int width = grid.GetLength(0);
+        int height = grid.GetLength(1);
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                char tile = grid[x, y];
+                Vector3 pos = GridToWorld(new Vector2Int(x, y));
+
+                GameObject prefab = GetPrefab(tile);
+
+                if (prefab != null)
+                {
+                    Instantiate(prefab, pos, Quaternion.identity, transform);
+                }
+            }
+        }
+    }
+
+    GameObject GetPrefab(char tile)
+    {
+        switch (tile)
+        {
+            case '.': return grassPrefab;
+            case '#': return pathPrefab;
+            default:
+                if (char.IsUpper(tile))
+                {
+                    if (startToEnd.ContainsKey(tile))
+                        return startPrefab;
+                    else
+                        return endPrefab;
+                }
+                return grassPrefab;
+        }
+    }
+
+    void PositionCamera()
+    {
+        if (mainCamera == null)
+        {
+            Debug.LogWarning("Main camera not assigned.");
+            return;
+        }
+
+        int width = grid.GetLength(0);
+        int height = grid.GetLength(1);
+
+        float worldWidth = width * tileSize;
+        float worldHeight = height * tileSize;
+
+        float centerX = (worldWidth - tileSize) / 2f;
+        float centerY = (worldHeight - tileSize) / 2f;
+
+        mainCamera.transform.position = new Vector3(centerX, centerY, mainCamera.transform.position.z);
+
+        float screenAspect = (float)Screen.width / Screen.height;
+        float verticalSize = worldHeight / 2f + cameraPadding;
+        float horizontalSize = (worldWidth / screenAspect) / 2f + cameraPadding;
+
+        mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize);
+    }
+
+    void GenerateAllPaths()
+    {
+        pathsByStart.Clear();
+
+        foreach (KeyValuePair<char, char> pair in startToEnd)
+        {
+            char startSymbol = pair.Key;
+            char endSymbol = pair.Value;
+
+            if (!startPositions.ContainsKey(startSymbol))
+            {
+                Debug.LogError($"Start '{startSymbol}' not found in grid.");
+                continue;
+            }
+
+            if (!endPositions.ContainsKey(endSymbol))
+            {
+                Debug.LogError($"End '{endSymbol}' not found in grid.");
+                continue;
+            }
+
+            Vector2Int startPos = startPositions[startSymbol];
+            Vector2Int endPos = endPositions[endSymbol];
+
+            List<Vector2Int> gridPath = FindPathBFS(startPos, endPos);
+
+            if (gridPath == null)
+            {
+                Debug.LogError($"No valid path found from '{startSymbol}' to '{endSymbol}'.");
+                continue;
+            }
+
+            List<Vector3> worldPath = new List<Vector3>();
+
+            foreach (Vector2Int cell in gridPath)
+            {
+                worldPath.Add(GridToWorld(cell));
+            }
+
+            pathsByStart[startSymbol] = worldPath;
+
+            Debug.Log($"Path built for {startSymbol} -> {endSymbol}, length = {worldPath.Count}");
+        }
+    }
+
+    List<Vector2Int> FindPathBFS(Vector2Int start, Vector2Int end)
+    {
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
+
+        queue.Enqueue(start);
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+
+            if (current == end)
+            {
+                return ReconstructPath(cameFrom, start, end);
+            }
+
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int next = current + dir;
+
+                if (!IsInBounds(next)) continue;
+                if (visited.Contains(next)) continue;
+                if (!IsWalkable(next, end)) continue;
+
+                visited.Add(next);
+                queue.Enqueue(next);
+                cameFrom[next] = current;
+            }
+        }
+
+        return null;
+    }
+
+    List<Vector2Int> ReconstructPath(Dictionary<Vector2Int, Vector2Int> cameFrom, Vector2Int start, Vector2Int end)
+    {
+        List<Vector2Int> path = new List<Vector2Int>();
+        Vector2Int current = end;
+
+        path.Add(current);
+
+        while (current != start)
+        {
+            current = cameFrom[current];
+            path.Add(current);
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    bool IsInBounds(Vector2Int pos)
+    {
+        return pos.x >= 0 &&
+               pos.y >= 0 &&
+               pos.x < grid.GetLength(0) &&
+               pos.y < grid.GetLength(1);
+    }
+
+    bool IsWalkable(Vector2Int pos, Vector2Int end)
+    {
+        if (pos == end) return true;
+
+        char tile = grid[pos.x, pos.y];
+        return tile == '#';
+    }
+
+    Vector3 GridToWorld(Vector2Int gridPos)
+    {
+        return new Vector3(gridPos.x * tileSize, gridPos.y * tileSize, 0f);
+    }
+
+    public List<Vector3> GetPathForStart(char startSymbol)
+    {
+        if (pathsByStart.TryGetValue(startSymbol, out List<Vector3> path))
+        {
+            return path;
+        }
+
+        return null;
+    }
+
+    public Vector3 GetWorldPositionForStart(char startSymbol)
+    {
+        if (startPositions.TryGetValue(startSymbol, out Vector2Int pos))
+        {
+            return GridToWorld(pos);
+        }
+
+        return Vector3.zero;
+    }
+
+    public int GetSpawnCountForStart(char startSymbol)
+    {
+        if (spawnCounts.TryGetValue(startSymbol, out int count))
+        {
+            return count;
+        }
+
+        return 0;
+    }
+
+    void OnDrawGizmos()
+    {
+        if (pathsByStart == null) return;
+
+        Gizmos.color = Color.yellow;
+
+        foreach (var pair in pathsByStart)
+        {
+            List<Vector3> path = pair.Value;
+
+            if (path == null || path.Count == 0) continue;
+
+            for (int i = 0; i < path.Count; i++)
+            {
+                Gizmos.DrawSphere(path[i], 0.1f);
+
+                if (i < path.Count - 1)
+                {
+                    Gizmos.DrawLine(path[i], path[i + 1]);
+                }
+            }
+        }
+    }
+}
