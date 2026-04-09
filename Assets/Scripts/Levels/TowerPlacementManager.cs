@@ -126,6 +126,13 @@ public class TowerPlacementManager : MonoBehaviour
             return;
         }
 
+        if (towerInspector.incomeTracker.currentMoney < towerPrefab.GetComponent<Tower>().cost)
+        {
+            return;
+        }
+
+        towerInspector.incomeTracker.currentMoney -= towerPrefab.GetComponent<Tower>().cost;
+
         GameObject placedTower = Instantiate(towerPrefab, snappedPos, Quaternion.identity);
 
         TowerInstance towerInstance = placedTower.GetComponent<TowerInstance>();

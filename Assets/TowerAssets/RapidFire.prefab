@@ -322,9 +322,9 @@ MonoBehaviour:
   range: 6
   damageType: 0
   projectileType: 0
-  damageUpgradeCosts: 0500000014000000640000000000000000000000
-  attackSpeedUpgradeCosts: 0500000014000000640000000000000000000000
-  rangeUpgradeCosts: 0500000014000000640000000000000000000000
+  damageUpgradeCosts: 050000001400000064000000
+  attackSpeedUpgradeCosts: 050000001400000064000000
+  rangeUpgradeCosts: 050000001400000064000000
   damageUpgradeLevel: 0
   attackSpeedUpgradeLevel: 0
   rangeUpgradeLevel: 0

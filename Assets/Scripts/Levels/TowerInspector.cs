@@ -7,6 +7,7 @@ public class TowerInspector : MonoBehaviour
     public TowerPlacementManager placementManager;
 
     public GameObject towerInspectorPanel;
+    private GameObject moneyLabel;
     private GameObject towerNameText;
     private GameObject towerDescriptionText;
     private GameObject towerStatsText;
@@ -22,6 +23,7 @@ public class TowerInspector : MonoBehaviour
     private void Start()
     {
         towerInspectorPanel.SetActive(true);
+        moneyLabel = towerInspectorPanel.transform.Find("MoneyLabel").gameObject;
         towerNameText = towerInspectorPanel.transform.Find("TowerName").gameObject;
         towerDescriptionText = towerInspectorPanel.transform.Find("TowerDescription").gameObject;
         towerStatsText = towerInspectorPanel.transform.Find("TowerStats").gameObject;
@@ -31,6 +33,11 @@ public class TowerInspector : MonoBehaviour
         specialUpgradeButton = towerInspectorPanel.transform.Find("SpecialUnlock").gameObject;
         sellButton = towerInspectorPanel.transform.Find("SellTower").gameObject;
         DeselectTower();
+    }
+
+    private void Update()
+    {
+        moneyLabel.GetComponent<TMPro.TextMeshProUGUI>().text = $"Money: ${incomeTracker.currentMoney}";
     }
     
     public void SelectTower(Tower tower)
@@ -60,7 +67,7 @@ public class TowerInspector : MonoBehaviour
             else
             {
                 damageUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
-                        $"${selectedTower.damageUpgradeCosts[selectedTower.damageUpgradeLevel]} [{selectedTower.damageUpgradeLevel}/{selectedTower.damageUpgradeCosts.Length}]";
+                        $"${selectedTower.damageUpgradeCosts[selectedTower.damageUpgradeLevel]} [{selectedTower.damageUpgradeLevel+1}/{selectedTower.damageUpgradeCosts.Length}]";
                 damageUpgradeButton.SetActive(true);
             }
             if (selectedTower.attackSpeedUpgradeLevel >= selectedTower.attackSpeedUpgradeCosts.Length)
@@ -68,7 +75,7 @@ public class TowerInspector : MonoBehaviour
             else
             {
                 attackSpeedUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
-                        $"${selectedTower.attackSpeedUpgradeCosts[selectedTower.attackSpeedUpgradeLevel]} [{selectedTower.attackSpeedUpgradeLevel}/{selectedTower.attackSpeedUpgradeCosts.Length}]";
+                        $"${selectedTower.attackSpeedUpgradeCosts[selectedTower.attackSpeedUpgradeLevel]} [{selectedTower.attackSpeedUpgradeLevel+1}/{selectedTower.attackSpeedUpgradeCosts.Length}]";
                 attackSpeedUpgradeButton.SetActive(true);
             }
             if (selectedTower.rangeUpgradeLevel >= selectedTower.rangeUpgradeCosts.Length)
@@ -76,7 +83,7 @@ public class TowerInspector : MonoBehaviour
             else
             {
                 rangeUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
-                        $"${selectedTower.rangeUpgradeCosts[selectedTower.rangeUpgradeLevel]} [{selectedTower.rangeUpgradeLevel}/{selectedTower.rangeUpgradeCosts.Length}]";
+                        $"${selectedTower.rangeUpgradeCosts[selectedTower.rangeUpgradeLevel]} [{selectedTower.rangeUpgradeLevel+1}/{selectedTower.rangeUpgradeCosts.Length}]";
                 rangeUpgradeButton.SetActive(true);
             }
             if (selectedTower.specialUnlocked || selectedTower.specialCost <= 0)
@@ -86,7 +93,7 @@ public class TowerInspector : MonoBehaviour
                 specialUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"${selectedTower.specialCost} [Unlock Special]";
                 specialUpgradeButton.SetActive(true);
             }
-
+            sellButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"Sell for ${Mathf.RoundToInt(selectedTower.cost * 0.7f)}";
             sellButton.SetActive(true);
         }
         else
