@@ -621,6 +621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77be01a4b7f33654aa92f61be8f842fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackNode
+  attackCollider: {fileID: 0}
+  enemiesInArea: []
 --- !u!1001 &2101104179
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -668,6 +670,18 @@ PrefabInstance:
     - target: {fileID: 2782482560326872736, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021634951071151865, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
+      propertyPath: range
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021634951071151865, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
+      propertyPath: damage
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021634951071151865, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
+      propertyPath: attackSpeed
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8840116011609496742, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
       propertyPath: m_Name

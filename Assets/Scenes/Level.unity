@@ -153,6 +153,19 @@ MonoBehaviour:
   pathPrefab: {fileID: 821100780676711914, guid: 4cdfd7d9e1762aa429a804d8872c5855, type: 3}
   startPrefab: {fileID: 821100780676711914, guid: 54506e542f8a7e340b38e80d374baa93, type: 3}
   endPrefab: {fileID: 821100780676711914, guid: 75798b9faff54cc428799fb5810c014a, type: 3}
+  enemyPrefabs:
+  - enemyName: Drone
+    prefab: {fileID: 622507789625817555, guid: 48fe30cdbcbc34746b214bff38f7576f, type: 3}
+  - enemyName: Energy Shielder
+    prefab: {fileID: 622507789625817555, guid: 95d87086343623341af38ca6885761c6, type: 3}
+  - enemyName: Normal
+    prefab: {fileID: 622507789625817555, guid: eb14bf1aabc9f6d48a327994503455a6, type: 3}
+  - enemyName: Sprinter
+    prefab: {fileID: 622507789625817555, guid: a9e1e145b5bba6445b9241359369031d, type: 3}
+  - enemyName: Tank
+    prefab: {fileID: 622507789625817555, guid: 1cd996c75b733434faefe77827b19c00, type: 3}
+  timeBetweenSpawns: 1
+  autoStartSpawning: 0
   tileSize: 1
   mainCamera: {fileID: 1370791164}
   cameraPadding: 1

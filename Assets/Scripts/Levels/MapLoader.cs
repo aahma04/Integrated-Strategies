@@ -1,5 +1,27 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+
+[System.Serializable]
+public class EnemyPrefabEntry
+{
+    public string enemyName;
+    public GameObject prefab;
+}
+
+public enum SpawnInstructionType
+{
+    Enemy,
+    Break
+}
+
+[System.Serializable]
+public class SpawnInstruction
+{
+    public SpawnInstructionType type;
+    public string enemyName;
+    public float delay;
+}
 
 public class MapLoader : MonoBehaviour
 {
@@ -13,7 +35,11 @@ public class MapLoader : MonoBehaviour
     public GameObject endPrefab;
 
     [Header("Enemy Prefabs")]
-    public GameObject enemyPrefab;
+    public List<EnemyPrefabEntry> enemyPrefabs = new();
+
+    [Header("Spawn Settings")]
+    public float timeBetweenSpawns = 1f;
+    public bool autoStartSpawning = false;
 
     public float tileSize = 1f;
 
@@ -22,18 +48,49 @@ public class MapLoader : MonoBehaviour
     public float cameraPadding = 1f;
 
     private Dictionary<char, char> startToEnd = new();
-    private Dictionary<char, int> spawnCounts = new();
+    private Dictionary<char, List<SpawnInstruction>> spawnInstructionsByStart = new();
 
     private Dictionary<char, Vector2Int> startPositions = new();
     private Dictionary<char, Vector2Int> endPositions = new();
 
     private Dictionary<char, List<Vector3>> pathsByStart = new();
+    private Dictionary<string, GameObject> enemyPrefabLookup = new();
 
     private char[,] grid;
 
     void Start()
     {
+        BuildEnemyPrefabLookup();
         LoadMap();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            StartAllSpawns();
+        }
+    }
+
+    void BuildEnemyPrefabLookup()
+    {
+        enemyPrefabLookup.Clear();
+
+        foreach (EnemyPrefabEntry entry in enemyPrefabs)
+        {
+            if (entry == null) continue;
+            if (string.IsNullOrWhiteSpace(entry.enemyName)) continue;
+            if (entry.prefab == null) continue;
+
+            string key = entry.enemyName.Trim().ToLower();
+
+            if (enemyPrefabLookup.ContainsKey(key))
+            {
+                Debug.LogWarning($"Duplicate enemy name '{entry.enemyName}' found. Overwriting previous prefab.");
+            }
+
+            enemyPrefabLookup[key] = entry.prefab;
+        }
     }
 
     void LoadMap()
@@ -44,6 +101,12 @@ public class MapLoader : MonoBehaviour
             return;
         }
 
+        startToEnd.Clear();
+        spawnInstructionsByStart.Clear();
+        startPositions.Clear();
+        endPositions.Clear();
+        pathsByStart.Clear();
+
         string[] lines = mapFile.text.Split('\n');
 
         string section = "";
@@ -53,18 +116,13 @@ public class MapLoader : MonoBehaviour
         {
             string line = rawLine.Trim();
 
-            // stop reading once grid section hits first blank line
             if (section == "[grid]" && string.IsNullOrEmpty(line))
             {
                 break;
             }
 
             if (string.IsNullOrEmpty(line)) continue;
-
-            // ignore comments
             if (line.StartsWith("//")) continue;
-
-            // ignore title line like #Level 1
             if (line.StartsWith("#")) continue;
 
             if (line.StartsWith("["))
@@ -103,11 +161,6 @@ public class MapLoader : MonoBehaviour
 
     void ParseStartEnd(string line)
     {
-        // supports:
-        // S=E
-        // AB=C
-        // GHI=K
-
         string[] parts = line.Split('=');
 
         if (parts.Length != 2 || string.IsNullOrEmpty(parts[0]) || string.IsNullOrEmpty(parts[1]))
@@ -128,25 +181,72 @@ public class MapLoader : MonoBehaviour
     void ParseSpawns(string line)
     {
         // Example:
-        // S:10
+        // S:normal:3,fast:2,break:4,tank:1
 
-        string[] parts = line.Split(':');
+        string[] firstSplit = line.Split(':', 2);
 
-        if (parts.Length != 2 || string.IsNullOrEmpty(parts[0]) || string.IsNullOrEmpty(parts[1]))
+        if (firstSplit.Length != 2 || string.IsNullOrWhiteSpace(firstSplit[0]) || string.IsNullOrWhiteSpace(firstSplit[1]))
         {
             Debug.LogError("Invalid spawns line: " + line);
             return;
         }
 
-        char start = parts[0].Trim()[0];
+        char start = firstSplit[0].Trim()[0];
+        string sequenceText = firstSplit[1].Trim();
 
-        if (!int.TryParse(parts[1].Trim(), out int count))
+        string[] entries = sequenceText.Split(',');
+        List<SpawnInstruction> instructions = new();
+
+        foreach (string rawEntry in entries)
         {
-            Debug.LogError("Invalid spawn count in line: " + line);
-            return;
+            string entry = rawEntry.Trim();
+            if (string.IsNullOrEmpty(entry)) continue;
+
+            string[] parts = entry.Split(':');
+
+            if (parts.Length != 2)
+            {
+                Debug.LogError("Invalid spawn entry '" + entry + "' in line: " + line);
+                continue;
+            }
+
+            string name = parts[0].Trim().ToLower();
+            string amountText = parts[1].Trim();
+
+            if (!int.TryParse(amountText, out int amount) || amount < 0)
+            {
+                Debug.LogError("Invalid amount in spawn entry '" + entry + "' in line: " + line);
+                continue;
+            }
+
+            if (name == "break")
+            {
+                instructions.Add(new SpawnInstruction
+                {
+                    type = SpawnInstructionType.Break,
+                    delay = amount
+                });
+            }
+            else
+            {
+                if (!enemyPrefabLookup.ContainsKey(name))
+                {
+                    Debug.LogError($"Enemy name '{name}' in line '{line}' does not match any enemy prefab entry.");
+                    continue;
+                }
+
+                for (int i = 0; i < amount; i++)
+                {
+                    instructions.Add(new SpawnInstruction
+                    {
+                        type = SpawnInstructionType.Enemy,
+                        enemyName = name
+                    });
+                }
+            }
         }
 
-        spawnCounts[start] = count;
+        spawnInstructionsByStart[start] = instructions;
     }
 
     void BuildGrid(List<string> gridLines)
@@ -169,7 +269,7 @@ public class MapLoader : MonoBehaviour
 
         for (int y = 0; y < height; y++)
         {
-            string line = gridLines[height - 1 - y]; // flip Y so bottom row is y = 0
+            string line = gridLines[height - 1 - y];
 
             for (int x = 0; x < width; x++)
             {
@@ -217,8 +317,12 @@ public class MapLoader : MonoBehaviour
     {
         switch (tile)
         {
-            case '.': return grassPrefab;
-            case '#': return pathPrefab;
+            case '.':
+                return grassPrefab;
+
+            case '#':
+                return pathPrefab;
+
             default:
                 if (char.IsUpper(tile))
                 {
@@ -227,6 +331,7 @@ public class MapLoader : MonoBehaviour
                     else
                         return endPrefab;
                 }
+
                 return grassPrefab;
         }
     }
@@ -289,7 +394,7 @@ public class MapLoader : MonoBehaviour
                 continue;
             }
 
-            List<Vector3> worldPath = new List<Vector3>();
+            List<Vector3> worldPath = new();
 
             foreach (Vector2Int cell in gridPath)
             {
@@ -304,9 +409,9 @@ public class MapLoader : MonoBehaviour
 
     List<Vector2Int> FindPathBFS(Vector2Int start, Vector2Int end)
     {
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
-        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+        Queue<Vector2Int> queue = new();
+        Dictionary<Vector2Int, Vector2Int> cameFrom = new();
+        HashSet<Vector2Int> visited = new();
 
         Vector2Int[] directions = new Vector2Int[]
         {
@@ -347,7 +452,7 @@ public class MapLoader : MonoBehaviour
 
     List<Vector2Int> ReconstructPath(Dictionary<Vector2Int, Vector2Int> cameFrom, Vector2Int start, Vector2Int end)
     {
-        List<Vector2Int> path = new List<Vector2Int>();
+        List<Vector2Int> path = new();
         Vector2Int current = end;
 
         path.Add(current);
@@ -403,14 +508,85 @@ public class MapLoader : MonoBehaviour
         return Vector3.zero;
     }
 
-    public int GetSpawnCountForStart(char startSymbol)
+    public List<SpawnInstruction> GetSpawnInstructionsForStart(char startSymbol)
     {
-        if (spawnCounts.TryGetValue(startSymbol, out int count))
+        if (spawnInstructionsByStart.TryGetValue(startSymbol, out List<SpawnInstruction> instructions))
         {
-            return count;
+            return instructions;
         }
 
-        return 0;
+        return null;
+    }
+
+    public GameObject GetEnemyPrefabByName(string enemyName)
+    {
+        if (string.IsNullOrWhiteSpace(enemyName))
+        {
+            return null;
+        }
+
+        enemyPrefabLookup.TryGetValue(enemyName.Trim().ToLower(), out GameObject prefab);
+        return prefab;
+    }
+
+    public void StartAllSpawns()
+    {
+        foreach (char startSymbol in spawnInstructionsByStart.Keys)
+        {
+            StartCoroutine(SpawnFromStart(startSymbol));
+        }
+    }
+
+    public IEnumerator SpawnFromStart(char startSymbol)
+    {
+        List<SpawnInstruction> instructions = GetSpawnInstructionsForStart(startSymbol);
+
+        if (instructions == null || instructions.Count == 0)
+        {
+            Debug.LogWarning($"No spawn instructions found for start '{startSymbol}'.");
+            yield break;
+        }
+
+        Vector3 spawnPos = GetWorldPositionForStart(startSymbol);
+        List<Vector3> path = GetPathForStart(startSymbol);
+
+        if (path == null || path.Count == 0)
+        {
+            Debug.LogError($"No path found for start '{startSymbol}'.");
+            yield break;
+        }
+
+        foreach (SpawnInstruction instruction in instructions)
+        {
+            if (instruction.type == SpawnInstructionType.Break)
+            {
+                yield return new WaitForSeconds(instruction.delay);
+            }
+            else if (instruction.type == SpawnInstructionType.Enemy)
+            {
+                GameObject prefab = GetEnemyPrefabByName(instruction.enemyName);
+
+                if (prefab == null)
+                {
+                    Debug.LogError($"No prefab found for enemy '{instruction.enemyName}'.");
+                    continue;
+                }
+
+                GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
+
+                Enemy enemyScript = enemy.GetComponent<Enemy>();
+                if (enemyScript != null)
+                {
+                    enemyScript.SetPath(path);
+                }
+                else
+                {
+                    Debug.LogError($"Spawned prefab '{prefab.name}' does not have an Enemy script attached.");
+                }
+
+                yield return new WaitForSeconds(timeBetweenSpawns);
+            }
+        }
     }
 
     void OnDrawGizmos()
