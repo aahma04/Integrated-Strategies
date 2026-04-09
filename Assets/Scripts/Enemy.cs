@@ -30,6 +30,9 @@ public class Enemy : MonoBehaviour
     private int currentPathIndex = 0;
     private bool hasPath = false;
 
+    private MapLoader mapLoader;
+    private char targetEndSymbol;
+
     public void Start()
     {
         currentHP = maxHP;
@@ -87,7 +90,15 @@ public class Enemy : MonoBehaviour
 
     void ReachEnd()
     {
-        // Replace this later with base damage / life loss logic
+        if (mapLoader != null)
+        {
+            mapLoader.DamageEndTile(targetEndSymbol, 1);
+        }
+        else
+        {
+            Debug.LogWarning("Enemy reached end but mapLoader was not assigned.");
+        }
+
         Destroy(gameObject);
     }
 
@@ -153,5 +164,15 @@ public class Enemy : MonoBehaviour
     public void AddEffect(Effect effect)
     {
         activeEffects.Add(effect);
+    }
+
+    public void SetMapLoader(MapLoader loader)
+    {
+        mapLoader = loader;
+    }
+
+    public void SetTargetEnd(char endSymbol)
+    {
+        targetEndSymbol = endSymbol;
     }
 }

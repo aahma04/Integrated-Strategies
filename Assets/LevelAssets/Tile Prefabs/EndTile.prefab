@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7563630015980979654}
   - component: {fileID: 6437459383951825574}
+  - component: {fileID: 4288310756379816132}
   m_Layer: 0
   m_Name: EndTile
   m_TagString: Untagged
@@ -91,3 +92,16 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4288310756379816132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821100780676711914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 218ad93d21d1a1945bcc2d27d6f234ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EndTile
+  lives: 3

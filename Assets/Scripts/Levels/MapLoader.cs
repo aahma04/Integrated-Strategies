@@ -47,11 +47,15 @@ public class MapLoader : MonoBehaviour
     public Camera mainCamera;
     public float cameraPadding = 1f;
 
+    [Header("Game Over Text")]
+    public GameObject gameOverText;
+
     private Dictionary<char, char> startToEnd = new();
     private Dictionary<char, List<SpawnInstruction>> spawnInstructionsByStart = new();
 
     private Dictionary<char, Vector2Int> startPositions = new();
     private Dictionary<char, Vector2Int> endPositions = new();
+    private Dictionary<char, EndTile> endTileInstances = new();
 
     private Dictionary<char, List<Vector3>> pathsByStart = new();
     private Dictionary<string, GameObject> enemyPrefabLookup = new();
@@ -296,6 +300,8 @@ public class MapLoader : MonoBehaviour
         int width = grid.GetLength(0);
         int height = grid.GetLength(1);
 
+        endTileInstances.Clear();
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -307,7 +313,21 @@ public class MapLoader : MonoBehaviour
 
                 if (prefab != null)
                 {
-                    Instantiate(prefab, pos, Quaternion.identity, transform);
+                    GameObject spawned = Instantiate(prefab, pos, Quaternion.identity, transform);
+
+                    if (char.IsUpper(tile) && !startToEnd.ContainsKey(tile))
+                    {
+                        EndTile endTile = spawned.GetComponent<EndTile>();
+
+                        if (endTile != null)
+                        {
+                            endTileInstances[tile] = endTile;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"End tile prefab at '{tile}' is missing an EndTile script.");
+                        }
+                    }
                 }
             }
         }
@@ -603,6 +623,8 @@ public class MapLoader : MonoBehaviour
                 if (enemyScript != null)
                 {
                     enemyScript.SetPath(path);
+                    enemyScript.SetMapLoader(this);
+                    enemyScript.SetTargetEnd(startToEnd[startSymbol]);
                 }
                 else
                 {
@@ -638,6 +660,34 @@ public class MapLoader : MonoBehaviour
         }
     }
 
+    public void DamageEndTile(char endSymbol, int amount)
+    {
+        if (!endTileInstances.TryGetValue(endSymbol, out EndTile endTile) || endTile == null)
+        {
+            Debug.LogWarning($"No EndTile instance found for '{endSymbol}'.");
+            return;
+        }
+
+        endTile.lives -= amount;
+
+        if (endTile.lives <= 0)
+        {
+            endTile.lives = 0;
+            GameOver();
+        }
+    }
+
+    public void GameOver()
+    {
+        Time.timeScale = 0f;
+
+        if (gameOverText != null)
+        {
+            gameOverText.SetActive(true);
+        }
+
+        enabled = false;
+    }
 
     //HELPER FUNCTIONS SO OTHER FILES CAN ACCESS POSITIONING/TILE INFO
     public bool TryGetGridPositionFromWorld(Vector3 worldPos, out Vector2Int gridPos)
