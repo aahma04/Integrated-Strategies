@@ -4,12 +4,12 @@ public class TowerInstance : MonoBehaviour
 {
     public Vector2Int GridPosition { get; private set; }
 
-    private TowerPlacementManager placementManager;
+    private TowerInspector towerInspector;
 
-    public void Initialize(Vector2Int gridPosition, TowerPlacementManager manager)
+    public void Initialize(Vector2Int gridPosition, TowerInspector inspector)
     {
         GridPosition = gridPosition;
-        placementManager = manager;
+        towerInspector = inspector;
 
         if (GetComponent<Collider2D>() == null)
         {
@@ -19,8 +19,6 @@ public class TowerInstance : MonoBehaviour
 
     void OnMouseDown()
     {
-        Debug.Log($"{name} clicked at tile {GridPosition}");
-        // later:
-        // placementManager.SelectPlacedTower(this);
+        towerInspector.SelectTower(this.gameObject.GetComponent<Tower>());
     }
 }

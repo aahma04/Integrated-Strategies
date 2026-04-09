@@ -23,7 +23,7 @@ public class Splash : Tower
     {
         if (specialUnlocked)
         {
-            foreach (Enemy enemy in enemiesInRange)
+            foreach (Enemy enemy in attackRange.enemiesInRange)
             {
                 enemy.TakeDamage(damage, damageType, this);
             }

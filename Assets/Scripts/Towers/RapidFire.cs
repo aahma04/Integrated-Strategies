@@ -8,16 +8,25 @@ public class RapidFire : Tower
     {
         int numTargets = specialUnlocked ? 2 : 1;
 
+        if (attackRange.enemiesInRange.Count == 0)
+        {
+            return null;
+        }
+        else if (attackRange.enemiesInRange.Count < numTargets)
+        {
+            numTargets = attackRange.enemiesInRange.Count;
+        }
+
         switch (targetPriority)
         {
             case TargetPriority.First:
-                return enemiesInRange.OrderByDescending(e => e.trackProgress).Take(numTargets).ToArray();
+                return attackRange.enemiesInRange.OrderByDescending(e => e.trackProgress).Take(numTargets).ToArray();
             case TargetPriority.Last:
-                return enemiesInRange.OrderBy(e => e.trackProgress).Take(numTargets).ToArray();
+                return attackRange.enemiesInRange.OrderBy(e => e.trackProgress).Take(numTargets).ToArray();
             case TargetPriority.Close:
-                return enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).Take(numTargets).ToArray();
+                return attackRange.enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).Take(numTargets).ToArray();
             case TargetPriority.Strong:
-                return enemiesInRange.OrderByDescending(e => e.maxHP).Take(numTargets).ToArray();
+                return attackRange.enemiesInRange.OrderByDescending(e => e.maxHP).Take(numTargets).ToArray();
         }
 
         return null;

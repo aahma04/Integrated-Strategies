@@ -62,9 +62,8 @@ public class Tower : MonoBehaviour
         Area
     }
 
-    private CircleCollider2D attackArea;
-
-    public List<Enemy> enemiesInRange;
+    // public List<Enemy> enemiesInRange;
+    public AttackRange attackRange;
     protected TargetPriority targetPriority = TargetPriority.First;
 
 
@@ -73,11 +72,7 @@ public class Tower : MonoBehaviour
 
     protected virtual void Start()
     {
-        enemiesInRange = new List<Enemy>();
-        attackArea = GetComponent<CircleCollider2D>();
-
-        attackArea.radius = range;
-
+        attackRange = GameObject.Find("AttackRange").transform.GetComponent<AttackRange>();
         activeEffects = new List<Effect>();
     }
 
@@ -112,16 +107,21 @@ public class Tower : MonoBehaviour
 
     protected virtual Enemy GetTarget()
     {
+        if (attackRange.enemiesInRange.Count == 0)
+        {
+            return null;
+        }
+
         switch (targetPriority)
         {
             case TargetPriority.First:
-                return enemiesInRange.OrderByDescending(e => e.trackProgress).FirstOrDefault();
+                return attackRange.enemiesInRange.OrderByDescending(e => e.trackProgress).FirstOrDefault();
             case TargetPriority.Last:
-                return enemiesInRange.OrderBy(e => e.trackProgress).FirstOrDefault();
+                return attackRange.enemiesInRange.OrderBy(e => e.trackProgress).FirstOrDefault();
             case TargetPriority.Close:
-                return enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).FirstOrDefault();
+                return attackRange.enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).FirstOrDefault();
             case TargetPriority.Strong:
-                return enemiesInRange.OrderByDescending(e => e.maxHP).FirstOrDefault();
+                return attackRange.enemiesInRange.OrderByDescending(e => e.maxHP).FirstOrDefault();
         }
 
         return null;
@@ -146,28 +146,28 @@ public class Tower : MonoBehaviour
     }
 
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            Enemy enemy = other.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemiesInRange.Add(enemy);
-            }
-        }
-    }
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (other.CompareTag("Enemy"))
+    //     {
+    //         Enemy enemy = other.GetComponent<Enemy>();
+    //         if (enemy != null)
+    //         {
+    //             enemiesInRange.Add(enemy);
+    //         }
+    //     }
+    // }
 
 
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            Enemy enemy = other.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemiesInRange.Remove(enemy);
-            }
-        }
-    }
+    // void OnTriggerExit2D(Collider2D other)
+    // {
+    //     if (other.CompareTag("Enemy"))
+    //     {
+    //         Enemy enemy = other.GetComponent<Enemy>();
+    //         if (enemy != null)
+    //         {
+    //             enemiesInRange.Remove(enemy);
+    //         }
+    //     }
+    // }
 }
