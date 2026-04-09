@@ -363,7 +363,7 @@ public class MapLoader : MonoBehaviour
     float verticalSize = worldHeight / 2f + cameraPadding;
     float horizontalSize = (worldWidth / usableAspect) / 2f + cameraPadding;
 
-    mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize) + 3f;
+    mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize);
 
     float visibleWorldHeight = mainCamera.orthographicSize * 2f;
     float visibleWorldWidth = visibleWorldHeight * fullAspect;
@@ -636,5 +636,51 @@ public class MapLoader : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    //HELPER FUNCTIONS SO OTHER FILES CAN ACCESS POSITIONING/TILE INFO
+    public bool TryGetGridPositionFromWorld(Vector3 worldPos, out Vector2Int gridPos)
+    {
+        gridPos = new Vector2Int(
+            Mathf.RoundToInt(worldPos.x / tileSize),
+            Mathf.RoundToInt(worldPos.y / tileSize)
+        );
+
+        return IsInBounds(gridPos);
+    }
+
+    public bool IsGrassTile(Vector2Int gridPos)
+    {
+        if (!IsInBounds(gridPos)) return false;
+        return grid[gridPos.x, gridPos.y] == '.';
+    }
+
+    public bool IsPathTile(Vector2Int gridPos)
+    {
+        if (!IsInBounds(gridPos)) return false;
+        return grid[gridPos.x, gridPos.y] == '#';
+    }
+
+    public bool IsStartOrEndTile(Vector2Int gridPos)
+    {
+        if (!IsInBounds(gridPos)) return false;
+        return char.IsUpper(grid[gridPos.x, gridPos.y]);
+    }
+
+    public bool IsPlaceableTile(Vector2Int gridPos)
+    {
+        if (!IsInBounds(gridPos)) return false;
+        return IsGrassTile(gridPos);
+    }
+
+    public Vector3 GetSnappedWorldPosition(Vector2Int gridPos)
+    {
+        return GridToWorld(gridPos);
+    }
+
+    public bool IsValidGridPosition(Vector2Int gridPos)
+    {
+        return IsInBounds(gridPos);
     }
 }
