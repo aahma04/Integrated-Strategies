@@ -24,11 +24,11 @@ public class Slow : Tower
         attackNodeScript = attackNode.GetComponent<AttackNode>();
     }
 
-    protected override void Update()
-    {
-        base.Update();
-        attackNode.transform.position = ;
-    }
+    // protected override void Update()
+    // {
+    //     base.Update();
+    //     attackNode.transform.position = ;
+    // }
 
     protected override void Attack(Enemy target)
     {
