@@ -337,30 +337,55 @@ public class MapLoader : MonoBehaviour
     }
 
     void PositionCamera()
+{
+    if (mainCamera == null)
     {
-        if (mainCamera == null)
-        {
-            Debug.LogWarning("Main camera not assigned.");
-            return;
-        }
-
-        int width = grid.GetLength(0);
-        int height = grid.GetLength(1);
-
-        float worldWidth = width * tileSize;
-        float worldHeight = height * tileSize;
-
-        float centerX = (worldWidth - tileSize) / 2f;
-        float centerY = (worldHeight - tileSize) / 2f;
-
-        mainCamera.transform.position = new Vector3(centerX, centerY, mainCamera.transform.position.z);
-
-        float screenAspect = (float)Screen.width / Screen.height;
-        float verticalSize = worldHeight / 2f + cameraPadding;
-        float horizontalSize = (worldWidth / screenAspect) / 2f + cameraPadding;
-
-        mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize);
+        Debug.LogWarning("Main camera not assigned.");
+        return;
     }
+
+    int width = grid.GetLength(0);
+    int height = grid.GetLength(1);
+
+    float worldWidth = width * tileSize;
+    float worldHeight = height * tileSize;
+
+    float reservedRightPercent = 0.25f;
+    float reservedBottomPercent = 0.25f;
+
+    float usableWidthPercent = 1f - reservedRightPercent;   // 0.75
+    float usableHeightPercent = 1f - reservedBottomPercent; // 0.75
+
+    float fullAspect = (float)Screen.width / Screen.height;
+
+    float usableAspect = (Screen.width * usableWidthPercent) / (Screen.height * usableHeightPercent);
+
+    float verticalSize = worldHeight / 2f + cameraPadding;
+    float horizontalSize = (worldWidth / usableAspect) / 2f + cameraPadding;
+
+    mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize) + 3f;
+
+    float visibleWorldHeight = mainCamera.orthographicSize * 2f;
+    float visibleWorldWidth = visibleWorldHeight * fullAspect;
+
+    // Usable area center in normalized screen space:
+    // x goes from 0 to 0.75, so center is 0.375
+    // y goes from 0.25 to 1.0, so center is 0.625
+    float usableCenterXNormalized = usableWidthPercent / 2f;
+    float usableCenterYNormalized = reservedBottomPercent + usableHeightPercent / 2f;
+
+    float usableCenterOffsetX = (usableCenterXNormalized - 0.5f) * visibleWorldWidth;
+    float usableCenterOffsetY = (usableCenterYNormalized - 0.5f) * visibleWorldHeight;
+
+    float mapCenterX = (worldWidth - tileSize) / 2f;
+    float mapCenterY = (worldHeight - tileSize) / 2f;
+
+    mainCamera.transform.position = new Vector3(
+        mapCenterX - usableCenterOffsetX,
+        mapCenterY - usableCenterOffsetY,
+        mainCamera.transform.position.z
+    );
+}
 
     void GenerateAllPaths()
     {
@@ -485,7 +510,7 @@ public class MapLoader : MonoBehaviour
 
     Vector3 GridToWorld(Vector2Int gridPos)
     {
-        return new Vector3(gridPos.x * tileSize, gridPos.y * tileSize, 0f);
+        return new Vector3(gridPos.x * tileSize, gridPos.y * tileSize, -2f);
     }
 
     public List<Vector3> GetPathForStart(char startSymbol)
