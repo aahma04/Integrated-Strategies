@@ -272,4 +272,12 @@ public class TowerPlacementManager : MonoBehaviour
     {
         return placedTowers.TryGetValue(gridPos, out tower);
     }
+
+    public void RemoveTower(Vector2Int gridPos)
+    {
+        if (placedTowers.ContainsKey(gridPos))
+        {
+            placedTowers.Remove(gridPos);
+        }
+    }
 }
