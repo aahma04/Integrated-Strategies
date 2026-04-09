@@ -21,14 +21,24 @@ public class Splash : Tower
 
     protected override void Attack(Enemy target)
     {
-        attackNode.transform.right = target.transform.position - transform.position;
-
-        foreach (GameObject enemyObj in GameObject.FindGameObjectsWithTag("Enemy"))
+        if (specialUnlocked)
         {
-            Enemy enemy = enemyObj.GetComponent<Enemy>();
-            if (attackCollider.bounds.Intersects(enemy.GetComponent<Collider2D>().bounds))
+            foreach (Enemy enemy in enemiesInRange)
             {
                 enemy.TakeDamage(damage, damageType, this);
+            }
+        }
+        else
+        {
+            attackNode.transform.right = target.transform.position - transform.position;
+
+            foreach (GameObject enemyObj in GameObject.FindGameObjectsWithTag("Enemy"))
+            {
+                Enemy enemy = enemyObj.GetComponent<Enemy>();
+                if (attackCollider.bounds.Intersects(enemy.GetComponent<Collider2D>().bounds))
+                {
+                    enemy.TakeDamage(damage, damageType, this);
+                }
             }
         }
     }

@@ -28,6 +28,18 @@ public class Tower : MonoBehaviour
     // [Header("Type")]
     // public string attackType; //"Single" , "AOE", etc. might be changed later
 
+    [Header("Upgrade Info")]
+    public int[] damageUpgradeCosts;
+    public int[] attackSpeedUpgradeCosts;
+    public int[] rangeUpgradeCosts;
+
+    public int damageUpgradeLevel = 0;
+    public int attackSpeedUpgradeLevel = 0;
+    public int rangeUpgradeLevel = 0;
+
+    public int specialCost;
+    public bool specialUnlocked = false;
+
     public enum TargetPriority
     {
         First,
@@ -54,7 +66,6 @@ public class Tower : MonoBehaviour
     public List<Enemy> enemiesInRange;
     protected TargetPriority targetPriority = TargetPriority.First;
 
-    protected bool specialUnlocked = false;
 
     protected List<Effect> activeEffects;
 
