@@ -95,6 +95,7 @@ public class Enemy : MonoBehaviour
         if (mapLoader != null)
         {
             mapLoader.DamageEndTile(targetEndSymbol, 1);
+            mapLoader.NotifyEnemyRemoved();
         }
         else
         {
@@ -162,6 +163,10 @@ public class Enemy : MonoBehaviour
             if (incomeTracker != null)
             {
                 incomeTracker.currentMoney += 25;
+            }
+            if (mapLoader != null)
+            {
+                mapLoader.NotifyEnemyRemoved();
             }
             else
             {

@@ -34,7 +34,7 @@ public class Slow : Tower
     {
         if (specialUnlocked)
         {
-            attackNode.transform.position = target.transform.position;
+            //attackNode.transform.position = target.transform.position;
 
             // foreach (GameObject enemyObj in GameObject.FindGameObjectsWithTag("Enemy"))
             // {

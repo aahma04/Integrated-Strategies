@@ -47,8 +47,9 @@ public class MapLoader : MonoBehaviour
     public Camera mainCamera;
     public float cameraPadding = 1f;
 
-    [Header("Game Over Text")]
+    [Header("Various Texts")]
     public GameObject gameOverText;
+    public GameObject pressP;
 
     private Dictionary<char, char> startToEnd = new();
     private Dictionary<char, List<SpawnInstruction>> spawnInstructionsByStart = new();
@@ -60,6 +61,12 @@ public class MapLoader : MonoBehaviour
     private Dictionary<char, List<Vector3>> pathsByStart = new();
     private Dictionary<string, GameObject> enemyPrefabLookup = new();
 
+    private int activeEnemyCount = 0;
+    private int activeSpawnerCount = 0;
+
+    private bool levelStarted;
+    
+
     private char[,] grid;
 
     void Start()
@@ -70,9 +77,11 @@ public class MapLoader : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) && levelStarted == false)
         {
             StartAllSpawns();
+            pressP.SetActive(false);
+            levelStarted = true;
         }
     }
 
@@ -576,6 +585,8 @@ public class MapLoader : MonoBehaviour
 
     public void StartAllSpawns()
     {
+        activeSpawnerCount = spawnInstructionsByStart.Count;
+
         foreach (char startSymbol in spawnInstructionsByStart.Keys)
         {
             StartCoroutine(SpawnFromStart(startSymbol));
@@ -618,6 +629,7 @@ public class MapLoader : MonoBehaviour
                 }
 
                 GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
+                NotifyEnemySpawned();
 
                 Enemy enemyScript = enemy.GetComponent<Enemy>();
                 if (enemyScript != null)
@@ -634,6 +646,9 @@ public class MapLoader : MonoBehaviour
                 yield return new WaitForSeconds(timeBetweenSpawns);
             }
         }
+
+        activeSpawnerCount--;
+        CheckLevelComplete();
     }
 
     void OnDrawGizmos()
@@ -658,6 +673,50 @@ public class MapLoader : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void NotifyEnemySpawned()
+    {
+        activeEnemyCount++;
+    }
+
+    public void NotifyEnemyRemoved()
+    {
+        activeEnemyCount--;
+
+        if (activeEnemyCount < 0)
+        {
+            activeEnemyCount = 0;
+        }
+
+        CheckLevelComplete();
+    }
+
+    void CheckLevelComplete()
+    {
+        if (activeSpawnerCount == 0 && activeEnemyCount == 0)
+        {
+            Debug.Log("Level complete.");
+            AdvanceToNextLevel();
+        }
+    }
+
+    void AdvanceToNextLevel()
+    {
+        LevelSequence.currentLevelIndex++;
+
+        LevelSequence levelSequence = FindAnyObjectByType<LevelSequence>();
+
+        if (levelSequence != null && LevelSequence.currentLevelIndex >= levelSequence.levels.Length)
+        {
+            Debug.Log("All levels complete.");
+            LevelSequence.currentLevelIndex = 0;
+            return;
+        }
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+        );
     }
 
     public void DamageEndTile(char endSymbol, int amount)
