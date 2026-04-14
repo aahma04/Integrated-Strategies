@@ -52,6 +52,9 @@ public class MapLoader : MonoBehaviour
     public GameObject gameOverText;
     public GameObject pressP;
 
+    [Header("Tower Inspector")]
+    public TowerInspector towerInspector;
+
     private Dictionary<char, char> startToEnd = new();
     private Dictionary<char, List<SpawnInstruction>> spawnInstructionsByStart = new();
 
@@ -799,5 +802,10 @@ public class MapLoader : MonoBehaviour
     public bool IsValidGridPosition(Vector2Int gridPos)
     {
         return IsInBounds(gridPos);
+    }
+
+    void OnMouseDown()
+    {
+        towerInspector.SelectTower(null);
     }
 }

@@ -263,7 +263,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 146e6562136a5bc40bcfec4f826e5aef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackRange
-  rangeCollider: {fileID: 0}
   enemiesInRange: []
 --- !u!1 &8840116011609496742
 GameObject:
@@ -317,6 +316,7 @@ MonoBehaviour:
   towerType: Rapid Fire
   description: Shoots very quickly
   cost: 5
+  towerColor: {r: 1, g: 1, b: 1, a: 1}
   damage: 150
   attackSpeed: 1
   range: 6

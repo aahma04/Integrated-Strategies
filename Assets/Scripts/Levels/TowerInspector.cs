@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TowerInspector : MonoBehaviour
 {
@@ -17,8 +18,9 @@ public class TowerInspector : MonoBehaviour
     private GameObject specialUpgradeButton;
     private GameObject sellButton;
 
-
     private Tower selectedTower;
+
+    public Color defaultColor;
 
     private void Start()
     {
@@ -58,6 +60,8 @@ public class TowerInspector : MonoBehaviour
     {
         if (selectedTower != null)
         {
+            towerInspectorPanel.GetComponent<RawImage>().color = selectedTower.towerColor;
+
             towerNameText.GetComponent<TMPro.TextMeshProUGUI>().text = selectedTower.towerName;
             towerDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = selectedTower.description;
             towerStatsText.GetComponent<TMPro.TextMeshProUGUI>().text = 
@@ -98,6 +102,8 @@ public class TowerInspector : MonoBehaviour
         }
         else
         {
+            towerInspectorPanel.GetComponent<RawImage>().color = defaultColor;
+
             towerNameText.GetComponent<TMPro.TextMeshProUGUI>().text = "";
             towerDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = "";
             towerStatsText.GetComponent<TMPro.TextMeshProUGUI>().text = "";

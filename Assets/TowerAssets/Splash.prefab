@@ -413,6 +413,7 @@ MonoBehaviour:
   towerType: Splash
   description: Shoots a spread of bullets
   cost: 80
+  towerColor: {r: 0, g: 0.14117648, b: 1, a: 1}
   damage: 250
   attackSpeed: 0.6
   range: 4

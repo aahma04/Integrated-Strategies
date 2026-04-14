@@ -1096,6 +1096,7 @@ MonoBehaviour:
   incomeTracker: {fileID: 1276002862}
   placementManager: {fileID: 2088503387}
   towerInspectorPanel: {fileID: 48956919}
+  defaultColor: {r: 0.29411766, g: 0.3019608, b: 0.3019608, a: 1}
 --- !u!4 &239585519
 Transform:
   m_ObjectHideFlags: 0
@@ -1976,6 +1977,7 @@ MonoBehaviour:
   cameraPadding: 1
   gameOverText: {fileID: 1542298959}
   pressP: {fileID: 854288714}
+  towerInspector: {fileID: 239585518}
 --- !u!4 &1129064181
 Transform:
   m_ObjectHideFlags: 0

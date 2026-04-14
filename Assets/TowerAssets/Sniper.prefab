@@ -234,6 +234,7 @@ MonoBehaviour:
   towerType: Sniper
   description: Deals massive damage from a long range
   cost: 50
+  towerColor: {r: 0, g: 0.50980395, b: 0.20392157, a: 1}
   damage: 600
   attackSpeed: 0.3
   range: 100
@@ -375,5 +376,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 146e6562136a5bc40bcfec4f826e5aef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackRange
-  rangeCollider: {fileID: 0}
   enemiesInRange: []

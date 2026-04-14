@@ -409,6 +409,7 @@ MonoBehaviour:
   towerType: Flamethrower
   description: Throws flame
   cost: 30
+  towerColor: {r: 1, g: 0, b: 0, a: 1}
   damage: 50
   attackSpeed: 1
   range: 6

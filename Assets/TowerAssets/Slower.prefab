@@ -399,6 +399,7 @@ MonoBehaviour:
   towerType: Slower
   description: Shoots slowing pulses
   cost: 80
+  towerColor: {r: 0, g: 0.92156863, b: 1, a: 1}
   damage: 5
   attackSpeed: 0.5
   range: 6
