@@ -7,6 +7,7 @@ public class Flamethrower : Tower
 
     private GameObject attackNode;
     private BoxCollider2D attackCollider;
+    private AttackRange attackNodeScript;
 
 
     protected override void Start()
@@ -14,6 +15,8 @@ public class Flamethrower : Tower
         base.Start();
         attackNode = transform.Find("AttackNode").gameObject;
         attackCollider = attackNode.GetComponent<BoxCollider2D>();
+
+        attackNodeScript = attackNode.GetComponent<AttackRange>();
     }
 
 
@@ -21,23 +24,24 @@ public class Flamethrower : Tower
     {
         attackNode.transform.right = target.transform.position - transform.position;
 
-        foreach (GameObject enemyObj in GameObject.FindGameObjectsWithTag("Enemy"))
+        Enemy[] enemiesToHit = attackNodeScript.enemiesInRange.ToArray();
+
+        Debug.Log("Enemies hit by flamethrower: " + enemiesToHit.Length);
+        foreach (Enemy enemy in enemiesToHit)
         {
-            Enemy enemy = enemyObj.GetComponent<Enemy>();
-            if (attackCollider.bounds.Intersects(enemy.GetComponent<Collider2D>().bounds))
-            {
-                ApplyBurn(enemy);
-            }
+            ApplyBurn(enemy);
         }
     }
 
 
     private void ApplyBurn(Enemy target)
     {
+        Debug.Log("Checking burn for " + target.name);
         // Check if target is either not burning or if special unlocked (stacking enabled)
         if (!target.activeEffects.Exists(effect => effect is Burning) || specialUnlocked)
         {
             target.AddEffect(new Burning(damage, burnDuration, this));
+            Debug.Log("Applied burn to " + target.name);
         }
     }
 }

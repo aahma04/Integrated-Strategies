@@ -24,6 +24,12 @@ public class Enemy : MonoBehaviour
     public float trackProgress = 0f;
     public float waypointReachedDistance = 0.05f;
 
+    [Header("(For Debuffs)")]
+    public float speedModifier = 1f;
+    public float speedModifierDuration = 0f;
+    public float damageModifier = 1f;
+    public float damageModifierDuration = 0f;
+
     public List<Effect> activeEffects;
 
     private List<Vector3> path;
@@ -50,18 +56,37 @@ public class Enemy : MonoBehaviour
 
     public void Update()
     {
-        MoveAlongPath();
-
         for (int i = activeEffects.Count - 1; i >= 0; i--)
         {
             activeEffects[i].ApplyEffect(this);
         }
+
+        if (speedModifierDuration > 0)
+        {
+            speedModifierDuration -= Time.deltaTime;
+            if (speedModifierDuration <= 0)
+            {
+                speedModifier = 1f;
+            }
+        }
+
+        if (damageModifierDuration > 0)
+        {
+            damageModifierDuration -= Time.deltaTime;
+            if (damageModifierDuration <= 0)
+            {
+                damageModifier = 1f;
+            }
+        }
+
+        MoveAlongPath();
     }
 
     void MoveAlongPath()
     {
         if (!hasPath || path == null || path.Count == 0)
         {
+            transform.position -= Vector3.right * speed * speedModifier * Time.deltaTime;
             return;
         }
 
@@ -141,6 +166,8 @@ public class Enemy : MonoBehaviour
         {
             amount -= amount * (damageReduction / 100f);
         }
+
+        amount *= damageModifier;
 
         if (amount <= 0)
         {

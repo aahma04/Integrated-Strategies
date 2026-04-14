@@ -62,8 +62,7 @@ public class Tower : MonoBehaviour
         Area
     }
 
-    // public List<Enemy> enemiesInRange;
-    public AttackRange attackRange;
+    public AttackRange attackRange; // needs to be public so enemies can remove themselves from tower range when they die
     protected TargetPriority targetPriority = TargetPriority.First;
 
 
@@ -146,28 +145,13 @@ public class Tower : MonoBehaviour
     }
 
 
-    // void OnTriggerEnter2D(Collider2D other)
-    // {
-    //     if (other.CompareTag("Enemy"))
-    //     {
-    //         Enemy enemy = other.GetComponent<Enemy>();
-    //         if (enemy != null)
-    //         {
-    //             enemiesInRange.Add(enemy);
-    //         }
-    //     }
-    // }
+    public void BuySpecial(int pathIndex)
+    {
+        return;
+    }
 
-
-    // void OnTriggerExit2D(Collider2D other)
-    // {
-    //     if (other.CompareTag("Enemy"))
-    //     {
-    //         Enemy enemy = other.GetComponent<Enemy>();
-    //         if (enemy != null)
-    //         {
-    //             enemiesInRange.Remove(enemy);
-    //         }
-    //     }
-    // }
+    public void ChangePriority()
+    {
+        targetPriority = (TargetPriority)(((int)targetPriority + 1) % System.Enum.GetValues(typeof(TargetPriority)).Length);
+    }
 }

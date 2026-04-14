@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class AttackRange : MonoBehaviour
 {
-    public Collider2D rangeCollider;
+    private Collider2D rangeCollider;
 
     public List<Enemy> enemiesInRange;
 
