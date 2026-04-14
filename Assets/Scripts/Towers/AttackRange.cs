@@ -39,6 +39,7 @@ public class AttackRange : MonoBehaviour
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy != null)
             {
+                Debug.Log("Enemy exited range: " + enemy.name);
                 enemiesInRange.Remove(enemy);
             }
         }
