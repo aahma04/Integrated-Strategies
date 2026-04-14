@@ -21,7 +21,7 @@ public class Splash : Tower
 
     protected override void Attack(Enemy target)
     {
-        if (specialUnlocked)
+        if (specialUnlocked == 1)
         {
             foreach (Enemy enemy in attackRange.enemiesInRange)
             {

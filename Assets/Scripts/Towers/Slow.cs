@@ -20,15 +20,13 @@ public class Slow : Tower
         attackNode = transform.Find("AttackNode").gameObject;
         attackCollider = attackNode.GetComponent<CircleCollider2D>();
         attackCollider.radius = slowRadius;
-
-        specialUnlocked = true; // for testing
         attackNodeScript = attackNode.GetComponent<AttackRange>();
     }
 
 
     protected override void Attack(Enemy target)
     {
-        if (specialUnlocked)
+        if (specialUnlocked == 1)
         {
             attackNode.transform.position = target.transform.position;
 

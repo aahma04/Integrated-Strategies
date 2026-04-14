@@ -16,7 +16,7 @@ public class Laser : Tower
 
         target.TakeDamage(damage * damageAmp, damageType, this);
 
-        if (specialUnlocked)
+        if (specialUnlocked == 1)
         {
             damageAmp = Mathf.Min(damageAmp + (Time.deltaTime * 0.5f), 2.5f);
         }

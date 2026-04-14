@@ -86,13 +86,13 @@ public class TowerInspector : MonoBehaviour
                         $"${selectedTower.rangeUpgradeCosts[selectedTower.rangeUpgradeLevel]} [{selectedTower.rangeUpgradeLevel+1}/{selectedTower.rangeUpgradeCosts.Length}]";
                 rangeUpgradeButton.SetActive(true);
             }
-            if (selectedTower.specialUnlocked || selectedTower.specialCost <= 0)
-                specialUpgradeButton.SetActive(false);
-            else
-            {
-                specialUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"${selectedTower.specialCost} [Unlock Special]";
-                specialUpgradeButton.SetActive(true);
-            }
+            // if (selectedTower.specialUnlocked || selectedTower.specialCost <= 0)
+            //     specialUpgradeButton.SetActive(false);
+            // else
+            // {
+            //     specialUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"${selectedTower.specialCost} [Unlock Special]";
+            //     specialUpgradeButton.SetActive(true);
+            // }
             sellButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"Sell for ${Mathf.RoundToInt(selectedTower.cost * 0.7f)}";
             sellButton.SetActive(true);
         }
@@ -157,20 +157,20 @@ public class TowerInspector : MonoBehaviour
         }
     }
 
-    public void UnlockSpecial()
-    {
-        if (selectedTower != null)
-        {
-            if (incomeTracker.currentMoney < selectedTower.specialCost)
-            {
-                return;
-            }
-            incomeTracker.currentMoney -= selectedTower.specialCost;
-            selectedTower.cost += selectedTower.specialCost;
-            selectedTower.specialUnlocked = true;
-            RefreshText();
-        }
-    }
+    // public void UnlockSpecial()
+    // {
+    //     if (selectedTower != null)
+    //     {
+    //         if (incomeTracker.currentMoney < selectedTower.specialCost)
+    //         {
+    //             return;
+    //         }
+    //         incomeTracker.currentMoney -= selectedTower.specialCost;
+    //         selectedTower.cost += selectedTower.specialCost;
+    //         selectedTower.specialUnlocked = true;
+    //         RefreshText();
+    //     }
+    // }
 
     public void SellTower()
     {

@@ -38,7 +38,7 @@ public class Flamethrower : Tower
     {
         Debug.Log("Checking burn for " + target.name);
         // Check if target is either not burning or if special unlocked (stacking enabled)
-        if (!target.activeEffects.Exists(effect => effect is Burning) || specialUnlocked)
+        if (!target.activeEffects.Exists(effect => effect is Burning) || (specialUnlocked == 1))
         {
             target.AddEffect(new Burning(damage, burnDuration, this));
             Debug.Log("Applied burn to " + target.name);

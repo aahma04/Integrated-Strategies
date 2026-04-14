@@ -6,7 +6,7 @@ public class RapidFire : Tower
 {
     private Enemy[] GetTarget()
     {
-        int numTargets = specialUnlocked ? 2 : 1;
+        int numTargets = (specialUnlocked == 1) ? 2 : 1;
 
         if (attackRange.enemiesInRange.Count == 0)
         {

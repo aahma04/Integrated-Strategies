@@ -39,7 +39,7 @@ public class Tower : MonoBehaviour
     public int rangeUpgradeLevel = 0;
 
     public int specialCost;
-    public bool specialUnlocked = false;
+    public int specialUnlocked = 0;
 
     public enum TargetPriority
     {
@@ -133,10 +133,10 @@ public class Tower : MonoBehaviour
     }
 
 
-    public void UnlockSpecial()
-    {
-        specialUnlocked = true;
-    }
+    // public void UnlockSpecial()
+    // {
+    //     specialUnlocked = true;
+    // }
 
 
     public void AddEffect(Effect effect)
@@ -147,7 +147,10 @@ public class Tower : MonoBehaviour
 
     public void BuySpecial(int pathIndex)
     {
-        return;
+        if (specialUnlocked != 0)
+            return;
+
+        specialUnlocked = Mathf.Clamp(pathIndex, 1, 3);
     }
 
     public void ChangePriority()
