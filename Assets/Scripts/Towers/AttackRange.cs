@@ -16,6 +16,15 @@ public class AttackRange : MonoBehaviour
     }
 
 
+    public void SetRange(float newRange)
+    {
+        if (rangeCollider is CircleCollider2D circle)
+        {
+            circle.radius = newRange;
+        }
+    }
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Collider enter: " + other.name);

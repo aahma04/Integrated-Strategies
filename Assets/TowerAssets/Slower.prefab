@@ -411,12 +411,70 @@ MonoBehaviour:
   damageUpgradeLevel: 0
   attackSpeedUpgradeLevel: 0
   rangeUpgradeLevel: 0
-  specialCost: 500
+  specialCosts: f4010000f4010000f4010000
+  specialDescriptions:
+  - :\n
+  - :\n
+  - :\n
   specialUnlocked: 0
+  damageUpgrades:
+  - name: Damage 1
+    description: 
+    cost: 100
+    effectAmount: 1.1
+  - name: Damage 2
+    description: 
+    cost: 100
+    effectAmount: 1.1
+  - name: Damage 3
+    description: 
+    cost: 100
+    effectAmount: 1.1
+  attackSpeedUpgrades:
+  - name: Attack Speed 1
+    description: 
+    cost: 100
+    effectAmount: 1.1
+  - name: Attack Speed 2
+    description: 
+    cost: 100
+    effectAmount: 1.1
+  - name: Attack Speed 3
+    description: 
+    cost: 100
+    effectAmount: 1.1
+  rangeUpgrades:
+  - name: Range 1
+    description: 
+    cost: 50
+    effectAmount: 1.1
+  - name: Range 2
+    description: 
+    cost: 50
+    effectAmount: 1.1
+  - name: Range 3
+    description: 
+    cost: 50
+    effectAmount: 1.1
+  specialUpgrades:
+  - name: Flash Freeze
+    description: Slows multiple enemies at once
+    cost: 500
+    effectAmount: 0
+  - name: Absolute Zero
+    description: Slow is greatly increased
+    cost: 500
+    effectAmount: 0
+  - name: Brittle
+    description: Slowed enemies take more damage from all sources
+    cost: 500
+    effectAmount: 0
   attackRange: {fileID: 0}
-  slowDuration: 5
-  slowAmount: 0.6
+  targetPriority: 0
   slowRadius: 1.5
+  slowAmount: 0.6
+  damageAmp: 0
+  slowDuration: 5
 --- !u!61 &5620462542167186835
 BoxCollider2D:
   m_ObjectHideFlags: 0

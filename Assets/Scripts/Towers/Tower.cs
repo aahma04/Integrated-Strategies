@@ -2,8 +2,38 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+[System.Serializable]
+public struct Upgrade
+{
+    public string name;
+    public string description;
+    public int cost;
+    public float effectAmount;
+}
+
 public class Tower : MonoBehaviour
 {
+    public enum TargetPriority
+    {
+        First,
+        Last,
+        Close,
+        Strong
+    }
+
+    public enum DamageType
+    {
+        Physical,
+        Energy,
+        True
+    }
+
+    public enum ProjectileType
+    {
+        Single,
+        Area
+    }
+
     [Header("Basic Information")]
     public string towerName;
     public string towerType;
@@ -31,40 +61,24 @@ public class Tower : MonoBehaviour
     // public string attackType; //"Single" , "AOE", etc. might be changed later
 
     [Header("Upgrade Info")]
-    public int[] damageUpgradeCosts;
-    public int[] attackSpeedUpgradeCosts;
-    public int[] rangeUpgradeCosts;
+    public Upgrade[] damageUpgrades;
+    public Upgrade[] attackSpeedUpgrades;
+    public Upgrade[] rangeUpgrades;
 
+    public Upgrade[] specialUpgrades;
+
+    [HideInInspector]
     public int damageUpgradeLevel = 0;
+    [HideInInspector]
     public int attackSpeedUpgradeLevel = 0;
+    [HideInInspector]
     public int rangeUpgradeLevel = 0;
-
-    public int specialCost;
+    [HideInInspector]
     public int specialUnlocked = 0;
-
-    public enum TargetPriority
-    {
-        First,
-        Last,
-        Close,
-        Strong
-    }
-
-    public enum DamageType
-    {
-        Physical,
-        Energy,
-        True
-    }
-
-    public enum ProjectileType
-    {
-        Single,
-        Area
-    }
-
+    [HideInInspector]
     public AttackRange attackRange; // needs to be public so enemies can remove themselves from tower range when they die
-    protected TargetPriority targetPriority = TargetPriority.First;
+    [HideInInspector]
+    public TargetPriority targetPriority = TargetPriority.First;
 
 
     protected List<Effect> activeEffects;
@@ -134,28 +148,30 @@ public class Tower : MonoBehaviour
     }
 
 
-    // public void UnlockSpecial()
-    // {
-    //     specialUnlocked = true;
-    // }
-
-
     public void AddEffect(Effect effect)
     {
         activeEffects.Add(effect);
     }
 
 
-    public void BuySpecial(int pathIndex)
+    public virtual void BuySpecial(int pathIndex)
     {
         if (specialUnlocked != 0)
             return;
 
-        specialUnlocked = Mathf.Clamp(pathIndex, 1, 3);
+        specialUnlocked = pathIndex + 1;
+        description += $"\n{specialUpgrades[pathIndex].description}";
     }
 
     public void ChangePriority()
     {
         targetPriority = (TargetPriority)(((int)targetPriority + 1) % System.Enum.GetValues(typeof(TargetPriority)).Length);
+    }
+
+
+    public void UpdateRange(float newRange)
+    {
+        range = newRange;
+        attackRange.SetRange(newRange);
     }
 }

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public class Splash : Tower
 {
+    [Header("Path 3")]
+    public float shredAmount;
+    public float shredDuration;
+
     private GameObject attackNode;
     private PolygonCollider2D attackCollider;
 
@@ -38,6 +42,11 @@ public class Splash : Tower
                 if (attackCollider.bounds.Intersects(enemy.GetComponent<Collider2D>().bounds))
                 {
                     enemy.TakeDamage(damage, damageType, this);
+
+                    if (specialUnlocked == 2)
+                    {
+                        enemy.ApplyShred(shredAmount, shredDuration);
+                    }
                 }
             }
         }

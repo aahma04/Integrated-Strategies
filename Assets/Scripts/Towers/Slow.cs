@@ -3,9 +3,15 @@ using UnityEngine;
 
 public class Slow : Tower
 {
-    public float slowDuration = 5f;
-    public float slowAmount = 0.6f;
+    [Header("Path 1")]
     public float slowRadius = 1.5f;
+
+    [Header("Path 2")]
+    public float slowAmount = 0.4f;
+
+    [Header("Path 3")]
+    public float damageAmp;
+    public float slowDuration = 5f;
 
     private GameObject attackNode;
     private CircleCollider2D attackCollider;
@@ -24,6 +30,17 @@ public class Slow : Tower
     }
 
 
+    public override void BuySpecial(int pathIndex)
+    {
+        base.BuySpecial(pathIndex);
+
+        if (specialUnlocked == 2)
+        {
+            slowAmount = 0.7f;
+        }
+    }
+
+
     protected override void Attack(Enemy target)
     {
         if (specialUnlocked == 1)
@@ -35,21 +52,25 @@ public class Slow : Tower
 
             foreach (Enemy enemy in enemiesToHit)
             {
-                ApplySlow(enemy);
+                ApplyAttack(enemy);
             }
         }
         else
         {
-            ApplySlow(target);
+            ApplyAttack(target);
         }
     }
 
-    private void ApplySlow(Enemy target)
+    private void ApplyAttack(Enemy target)
     {
         target.TakeDamage(damage, damageType, this);
 
-        target.speedModifier = Mathf.Min(target.speedModifier, 1-slowAmount);
-        target.speedModifierDuration = Mathf.Max(target.speedModifierDuration, slowDuration);
+        target.ApplySlow(slowAmount, slowDuration);
+        
+        if (specialUnlocked == 3)
+        {
+            target.ApplyWeakness(damageAmp, slowDuration);
+        }
     }
 
 }

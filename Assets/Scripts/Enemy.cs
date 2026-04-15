@@ -24,15 +24,23 @@ public class Enemy : MonoBehaviour
     public float trackProgress = 0f;
     public float waypointReachedDistance = 0.05f;
 
-    [Header("(For Debuffs)")]
+    [HideInInspector]
     public float speedModifier = 1f;
+    [HideInInspector]
     public float speedModifierDuration = 0f;
+    [HideInInspector]
+    public float defenseModifier = 0f;
+    [HideInInspector]
+    public float defenseModifierDuration = 0f;
+    [HideInInspector]
     public float damageModifier = 1f;
+    [HideInInspector]
     public float damageModifierDuration = 0f;
 
+    [HideInInspector]
     public List<Effect> activeEffects;
 
-    private List<Vector3> path;
+    public List<Vector3> path;
     private int currentPathIndex = 0;
     private bool hasPath = false;
 
@@ -67,6 +75,15 @@ public class Enemy : MonoBehaviour
             if (speedModifierDuration <= 0)
             {
                 speedModifier = 1f;
+            }
+        }
+
+        if (defenseModifierDuration > 0)
+        {
+            defenseModifierDuration -= Time.deltaTime;
+            if (defenseModifierDuration <= 0)
+            {
+                defenseModifier = 0f;
             }
         }
 
@@ -159,7 +176,7 @@ public class Enemy : MonoBehaviour
 
         if (damageType == Tower.DamageType.Physical)
         {
-            amount -= defense;
+            amount -= (defense - defenseModifier);
         }
 
         if (damageType != Tower.DamageType.True)
@@ -202,6 +219,28 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+
+    public void ApplySlow(float amount, float duration)
+    {
+        speedModifier = Mathf.Min(speedModifier, 1 - amount);
+        speedModifierDuration = Mathf.Max(speedModifierDuration, duration);
+    }
+
+
+    public void ApplyShred(float amount, float duration)
+    {
+        defenseModifier = Mathf.Max(defenseModifier, amount);
+        defenseModifierDuration = Mathf.Max(defenseModifierDuration, duration);
+    }
+
+
+    public void ApplyWeakness(float amount, float duration)
+    {
+        damageModifier = Mathf.Min(damageModifier, amount);
+        damageModifierDuration = Mathf.Max(damageModifierDuration, duration);
+    }
+
 
     public void AddEffect(Effect effect)
     {
