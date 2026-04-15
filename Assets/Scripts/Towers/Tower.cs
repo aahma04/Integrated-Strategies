@@ -5,10 +5,17 @@ using System.Linq;
 [System.Serializable]
 public struct Upgrade
 {
+    public int cost;
+    public float effectAmount;
+}
+
+[System.Serializable]
+public struct SpecialUpgrade
+{
     public string name;
     public string description;
     public int cost;
-    public float effectAmount;
+    public string newTowerName;
 }
 
 public class Tower : MonoBehaviour
@@ -49,6 +56,7 @@ public class Tower : MonoBehaviour
     public float attackSpeed = 1f;
     public float range = 0f;
     protected float attackCooldown = 0f; //works as an original spawn delay + helps incorporate atkSpd
+    public int numTargets = 1;
 
     [Header("Attack Info")]
     public DamageType damageType;
@@ -65,7 +73,7 @@ public class Tower : MonoBehaviour
     public Upgrade[] attackSpeedUpgrades;
     public Upgrade[] rangeUpgrades;
 
-    public Upgrade[] specialUpgrades;
+    public SpecialUpgrade[] specialUpgrades;
 
     [HideInInspector]
     public int damageUpgradeLevel = 0;
@@ -99,10 +107,18 @@ public class Tower : MonoBehaviour
             return;
         }
 
-        Enemy target = GetTarget();
-        if (target != null)
+        attackRange.SetRange(range);
+        Enemy[] targets = attackRange.GetTarget(numTargets, transform, targetPriority);
+        if (targets != null)
         {
-            Attack(target);
+            if (targets.Length > 1)
+            {
+                MultiAttack(targets);
+            }
+            else
+            {
+                Attack(targets[0]);
+            }
             attackCooldown = 1f / attackSpeed;
         }
 
@@ -119,34 +135,15 @@ public class Tower : MonoBehaviour
     }
 
 
-    protected virtual Enemy GetTarget()
-    {
-        attackRange.SetRange(range);
-        
-        if (attackRange.enemiesInRange.Count == 0)
-        {
-            return null;
-        }
-
-        switch (targetPriority)
-        {
-            case TargetPriority.First:
-                return attackRange.enemiesInRange.OrderByDescending(e => e.trackProgress).FirstOrDefault();
-            case TargetPriority.Last:
-                return attackRange.enemiesInRange.OrderBy(e => e.trackProgress).FirstOrDefault();
-            case TargetPriority.Close:
-                return attackRange.enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).FirstOrDefault();
-            case TargetPriority.Strong:
-                return attackRange.enemiesInRange.OrderByDescending(e => e.maxHP).FirstOrDefault();
-        }
-
-        return null;
-    }
-
-
     protected virtual void Attack(Enemy target)
     {
         target.TakeDamage(damage, damageType, this);
+    }
+
+
+    protected virtual void MultiAttack(Enemy[] targets)
+    {
+        return;
     }
 
 
@@ -162,6 +159,7 @@ public class Tower : MonoBehaviour
             return;
 
         specialUnlocked = pathIndex + 1;
+        towerName = specialUpgrades[pathIndex].newTowerName;
         description += $"\n{specialUpgrades[pathIndex].description}";
     }
 

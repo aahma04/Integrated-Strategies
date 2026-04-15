@@ -803,9 +803,4 @@ public class MapLoader : MonoBehaviour
     {
         return IsInBounds(gridPos);
     }
-
-    void OnMouseDown()
-    {
-        towerInspector.SelectTower(null);
-    }
 }

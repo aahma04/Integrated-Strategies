@@ -13,20 +13,30 @@ public class Slow : Tower
     public float damageAmp;
     public float slowDuration = 5f;
 
-    private GameObject attackNode;
-    private CircleCollider2D attackCollider;
-    private AttackRange attackNodeScript;
+    [Header("Perk Version")]
+    public bool isAttackMode;
+    public float attackModeDamage = 100f;
+    public float attackModeAttackSpeed = 1f;
+    public float attackModeSlowAmount = 0.15f;
 
-    private Enemy currentTarget;
+    private GameObject attackNode;
+    private AttackRange attackNodeScript;
 
 
     protected override void Awake()
     {
         base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
-        attackCollider = attackNode.GetComponent<CircleCollider2D>();
-        attackCollider.radius = slowRadius;
         attackNodeScript = attackNode.GetComponent<AttackRange>();
+        attackNodeScript.SetRange(slowRadius);
+    }
+
+
+    public void EnterAttackMode()
+    {
+        damage = attackModeDamage;
+        attackSpeed = attackModeAttackSpeed;
+        slowAmount = attackModeSlowAmount;
     }
 
 
@@ -36,7 +46,7 @@ public class Slow : Tower
 
         if (specialUnlocked == 2)
         {
-            slowAmount = 0.7f;
+            slowAmount += 0.3f;
         }
     }
 

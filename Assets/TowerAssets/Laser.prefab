@@ -1,5 +1,87 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &189655983755029268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4774698087849992994}
+  - component: {fileID: 35167418546965956}
+  - component: {fileID: 7576258360974080227}
+  m_Layer: 2
+  m_Name: AttackNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4774698087849992994
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189655983755029268}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2782482560326872736}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &35167418546965956
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189655983755029268}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
+--- !u!114 &7576258360974080227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189655983755029268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 146e6562136a5bc40bcfec4f826e5aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AttackRange
+  enemiesInRange: []
 --- !u!1 &907666820601874532
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,6 +440,7 @@ Transform:
   - {fileID: 8766297072272586248}
   - {fileID: 388916471921359486}
   - {fileID: 560701343019116284}
+  - {fileID: 4774698087849992994}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-7445013474585338255
@@ -380,60 +463,46 @@ MonoBehaviour:
   damage: 20
   attackSpeed: 5
   range: 12
+  numTargets: 1
   damageType: 1
   projectileType: 0
   damageUpgrades:
-  - name: Damage 1
-    description: 
-    cost: 50
+  - cost: 50
     effectAmount: 1.1
-  - name: Damage 2
-    description: 
-    cost: 400
+  - cost: 400
     effectAmount: 1.1
-  - name: Damage 3
-    description: 
-    cost: 1000
+  - cost: 1000
     effectAmount: 1.1
   attackSpeedUpgrades:
-  - name: Attack Speed 1
-    description: 
-    cost: 50
+  - cost: 50
     effectAmount: 1.1
-  - name: Attack Speed 2
-    description: 
-    cost: 400
+  - cost: 400
     effectAmount: 1.1
-  - name: Attack Speed 3
-    description: 
-    cost: 1000
+  - cost: 1000
     effectAmount: 0
   rangeUpgrades:
-  - name: Range 1
-    description: 
-    cost: 50
+  - cost: 50
     effectAmount: 1.1
-  - name: Range 2
-    description: 
-    cost: 400
+  - cost: 400
     effectAmount: 1.1
-  - name: Range 3
-    description: 
-    cost: 1000
+  - cost: 1000
     effectAmount: 1.1
   specialUpgrades:
   - name: Beam Accelerator
     description: Consecutive attacks on a single target ramp up over time
     cost: 500
-    effectAmount: 0
+    newTowerName: Beam Accelerator
+    isAvailable: 0
   - name: Heat Fatigue
     description: Slows targeted enemy
     cost: 500
-    effectAmount: 0
+    newTowerName: Heat Laser
+    isAvailable: 0
   - name: Refraction
     description: Attacks chain to a nearby enemy
     cost: 500
-    effectAmount: 0
+    newTowerName: Refractor
+    isAvailable: 0
   damageUpgradeLevel: 0
   attackSpeedUpgradeLevel: 0
   rangeUpgradeLevel: 0
@@ -441,10 +510,11 @@ MonoBehaviour:
   attackRange: {fileID: 0}
   targetPriority: 0
   damageRampRate: 0.5
+  damageAmpCap: 2.5
   special2SlowAmount: 0.5
-  special3DamageFalloff: 0
-  special3Range: 0
-  special3NumBounces: 0
+  chainDamageFalloff: 0
+  chainRange: 0
+  numBounces: 0
 --- !u!61 &730606396600828822
 BoxCollider2D:
   m_ObjectHideFlags: 0

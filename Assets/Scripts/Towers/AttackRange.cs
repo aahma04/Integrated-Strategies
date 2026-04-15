@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class AttackRange : MonoBehaviour
 {
@@ -45,6 +46,35 @@ public class AttackRange : MonoBehaviour
     public void SetIndicatorColour(Color c)
     {
         rangeIndicator.color = c;
+    }
+
+
+    public Enemy[] GetTarget(int numTargets, Transform center, Tower.TargetPriority targetPriority)
+    {
+
+        if (enemiesInRange.Count == 0)
+        {
+            return null;
+        }
+
+        if (enemiesInRange.Count < numTargets)
+        {
+            numTargets = enemiesInRange.Count;
+        }
+
+        switch (targetPriority)
+        {
+            case Tower.TargetPriority.First:
+                return enemiesInRange.OrderByDescending(e => e.trackProgress).Take(numTargets).ToArray();
+            case Tower.TargetPriority.Last:
+                return enemiesInRange.OrderBy(e => e.trackProgress).Take(numTargets).ToArray();
+            case Tower.TargetPriority.Close:
+                return enemiesInRange.OrderBy(e => Vector2.Distance(center.position, e.transform.position)).Take(numTargets).ToArray();
+            case Tower.TargetPriority.Strong:
+                return enemiesInRange.OrderByDescending(e => e.maxHP).Take(numTargets).ToArray();
+        }
+
+        return null;
     }
 
 

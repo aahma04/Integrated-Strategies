@@ -17,7 +17,6 @@ public class Flamethrower : Tower
     public float lavaPoolDuration;
 
     private GameObject attackNode;
-    private BoxCollider2D attackCollider;
     private AttackRange attackNodeScript;
 
 
@@ -25,8 +24,6 @@ public class Flamethrower : Tower
     {
         base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
-        attackCollider = attackNode.GetComponent<BoxCollider2D>();
-
         attackNodeScript = attackNode.GetComponent<AttackRange>();
     }
 

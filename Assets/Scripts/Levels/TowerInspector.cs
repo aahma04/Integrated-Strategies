@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 
 public class TowerInspector : MonoBehaviour
@@ -29,6 +31,8 @@ public class TowerInspector : MonoBehaviour
 
     public Color defaultColour;
     public Color towerRangeColour;
+
+    public Dictionary<System.Type, bool[]> upgradesAvailable;
 
 
     private void Start()
@@ -60,6 +64,9 @@ public class TowerInspector : MonoBehaviour
         {
             specialUnlockButtons[i] = towerInspectorPanel.transform.Find($"Special{i+1}Unlock").gameObject;
         }
+
+        upgradesAvailable = new Dictionary<System.Type, bool[]>();
+
         DeselectTower();
     }
 
@@ -72,6 +79,11 @@ public class TowerInspector : MonoBehaviour
 
     public void SelectTower(Tower tower)
     {
+        if (tower == selectedTower) {
+            DeselectTower();
+            return;
+        }
+
         if (selectedTower != null)
         {
             selectedTower.attackRange.SetIndicatorVisibility(false);
@@ -102,8 +114,7 @@ public class TowerInspector : MonoBehaviour
             towerInspectorPanel.GetComponent<RawImage>().color = selectedTower.towerColor;
 
             // Tower Name
-            towerNameText.GetComponent<TMPro.TextMeshProUGUI>().text = 
-                selectedTower.towerName + (selectedTower.specialUnlocked != 0 ? $" (Upgraded)" : "");
+            towerNameText.GetComponent<TMPro.TextMeshProUGUI>().text = selectedTower.towerName;
 
             // Tower Description
             towerDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = 
@@ -156,9 +167,14 @@ public class TowerInspector : MonoBehaviour
             }
 
             // Special Unlock Buttons
+            if (!upgradesAvailable.ContainsKey(selectedTower.GetType()))
+            {
+                upgradesAvailable[selectedTower.GetType()] = new bool[] /*{false,false,false}*/ {true,true,true};
+            }
+
             for (int i = 0; i < specialUnlockButtons.Length; i++)
             {
-                if (selectedTower.specialUnlocked != 0)
+                if (selectedTower.specialUnlocked != 0 || !upgradesAvailable[selectedTower.GetType()][i])
                 {
                     specialUnlockButtons[i].SetActive(false);
                 }

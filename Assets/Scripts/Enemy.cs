@@ -36,6 +36,8 @@ public class Enemy : MonoBehaviour
     public float damageModifier = 1f;
     [HideInInspector]
     public float damageModifierDuration = 0f;
+    [HideInInspector]
+    public float silenceDuration = 0f;
 
     [HideInInspector]
     public List<Effect> activeEffects;
@@ -94,6 +96,11 @@ public class Enemy : MonoBehaviour
             {
                 damageModifier = 1f;
             }
+        }
+
+        if (silenceDuration > 0)
+        {
+            silenceDuration -= Time.deltaTime;
         }
 
         MoveAlongPath();
@@ -239,6 +246,12 @@ public class Enemy : MonoBehaviour
     {
         damageModifier = Mathf.Min(damageModifier, amount);
         damageModifierDuration = Mathf.Max(damageModifierDuration, duration);
+    }
+
+
+    public void ApplySilence(float duration)
+    {
+        silenceDuration = Mathf.Max(silenceDuration, duration);
     }
 
 

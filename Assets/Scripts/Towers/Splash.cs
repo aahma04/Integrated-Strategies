@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 public class Splash : Tower
 {
+    [Header("Path 2")]
+    public float maxDamageAmp = 5f;
+    private float damageAmp = 1f;
+
     [Header("Path 3")]
     public float shredAmount;
     public float shredDuration;
 
     private GameObject attackNode;
-    private PolygonCollider2D attackCollider;
-
-    private List<Collider2D> collidersInDamageArea;
+    private AttackRange attackNodeScript;
 
 
     protected override void Awake()
     {
         base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
-        attackCollider = attackNode.GetComponent<PolygonCollider2D>();
-
-        collidersInDamageArea = new List<Collider2D>();
+        attackNodeScript = attackNode.GetComponent<AttackRange>();
     }
 
 
@@ -34,19 +34,20 @@ public class Splash : Tower
         }
         else
         {
-            attackNode.transform.right = target.transform.position - transform.position;
+            Enemy[] enemiesToHit = attackNodeScript.enemiesInRange.ToArray();
 
-            foreach (GameObject enemyObj in GameObject.FindGameObjectsWithTag("Enemy"))
+            foreach (Enemy enemy in enemiesToHit)
             {
-                Enemy enemy = enemyObj.GetComponent<Enemy>();
-                if (attackCollider.bounds.Intersects(enemy.GetComponent<Collider2D>().bounds))
+                if (specialUnlocked == 2)
                 {
-                    enemy.TakeDamage(damage, damageType, this);
+                    damageAmp = maxDamageAmp/(Mathf.Sqrt(enemiesToHit.Length));
+                }
 
-                    if (specialUnlocked == 2)
-                    {
-                        enemy.ApplyShred(shredAmount, shredDuration);
-                    }
+                enemy.TakeDamage(damage*damageAmp, damageType, this);
+
+                if (specialUnlocked == 3)
+                {
+                    enemy.ApplyShred(shredAmount, shredDuration);
                 }
             }
         }

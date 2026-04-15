@@ -4,8 +4,7 @@ using System.Linq;
 
 public class RapidFire : Tower
 {   
-    [Header("Path 1")]
-    public int numTargets = 1;
+    // Path 1 will upgrade numTargets from Tower class
 
     [Header("Path 2")]
     public float criticalChance;
@@ -13,6 +12,7 @@ public class RapidFire : Tower
 
     [Header("Path 3")]
     public float adrenalineMultiplier;
+
 
     public override void BuySpecial(int pathIndex)
     {
@@ -24,35 +24,8 @@ public class RapidFire : Tower
         }
     }
 
-    private Enemy[] GetTarget()
-    {
 
-        if (attackRange.enemiesInRange.Count == 0)
-        {
-            return null;
-        }
-        else if (attackRange.enemiesInRange.Count < numTargets)
-        {
-            numTargets = attackRange.enemiesInRange.Count;
-        }
-
-        switch (targetPriority)
-        {
-            case TargetPriority.First:
-                return attackRange.enemiesInRange.OrderByDescending(e => e.trackProgress).Take(numTargets).ToArray();
-            case TargetPriority.Last:
-                return attackRange.enemiesInRange.OrderBy(e => e.trackProgress).Take(numTargets).ToArray();
-            case TargetPriority.Close:
-                return attackRange.enemiesInRange.OrderBy(e => Vector2.Distance(transform.position, e.transform.position)).Take(numTargets).ToArray();
-            case TargetPriority.Strong:
-                return attackRange.enemiesInRange.OrderByDescending(e => e.maxHP).Take(numTargets).ToArray();
-        }
-
-        return null;
-    }
-
-
-    private void Attack(Enemy[] targets)
+    protected void MultiAttack(Enemy[] targets)
     {
         float attackDamage = damage;
 
