@@ -84,9 +84,9 @@ public class Tower : MonoBehaviour
     protected List<Effect> activeEffects;
 
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
-        attackRange = GameObject.Find("AttackRange").transform.GetComponent<AttackRange>();
+        attackRange = GetComponentInChildren<AttackRange>();
         activeEffects = new List<Effect>();
     }
 
@@ -121,6 +121,8 @@ public class Tower : MonoBehaviour
 
     protected virtual Enemy GetTarget()
     {
+        attackRange.SetRange(range);
+        
         if (attackRange.enemiesInRange.Count == 0)
         {
             return null;
@@ -172,6 +174,11 @@ public class Tower : MonoBehaviour
     public void UpdateRange(float newRange)
     {
         range = newRange;
+        if (attackRange == null)
+        {
+            Debug.Log("null area");
+            return;
+        }
         attackRange.SetRange(newRange);
     }
 }

@@ -4,13 +4,16 @@ using System.Collections.Generic;
 public class AttackRange : MonoBehaviour
 {
     private Collider2D rangeCollider;
+    private SpriteRenderer rangeIndicator;
 
     public List<Enemy> enemiesInRange;
 
 
-    private void Start()
+    private void Awake()
     {
         rangeCollider = GetComponent<Collider2D>();
+        rangeIndicator = GetComponent<SpriteRenderer>();
+        SetIndicatorVisibility(false);
 
         enemiesInRange = new List<Enemy>();
     }
@@ -22,6 +25,26 @@ public class AttackRange : MonoBehaviour
         {
             circle.radius = newRange;
         }
+
+        if (rangeIndicator != null)
+        {
+            rangeIndicator.transform.localScale = newRange * new Vector3(2f, 2f, 2f);
+        }
+    }
+
+
+    public void SetIndicatorVisibility(bool visibility)
+    {
+        if (rangeIndicator != null)
+        {
+            rangeIndicator.enabled = visibility;
+        }
+    }
+
+
+    public void SetIndicatorColour(Color c)
+    {
+        rangeIndicator.color = c;
     }
 
 

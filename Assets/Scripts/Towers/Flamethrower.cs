@@ -21,9 +21,9 @@ public class Flamethrower : Tower
     private AttackRange attackNodeScript;
 
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
         attackCollider = attackNode.GetComponent<BoxCollider2D>();
 

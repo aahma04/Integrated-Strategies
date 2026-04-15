@@ -20,9 +20,9 @@ public class Slow : Tower
     private Enemy currentTarget;
 
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
         attackCollider = attackNode.GetComponent<CircleCollider2D>();
         attackCollider.radius = slowRadius;

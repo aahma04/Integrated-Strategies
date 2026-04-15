@@ -13,9 +13,9 @@ public class Splash : Tower
     private List<Collider2D> collidersInDamageArea;
 
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
         attackCollider = attackNode.GetComponent<PolygonCollider2D>();
 

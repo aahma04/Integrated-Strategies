@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TowerInspector : MonoBehaviour
 {
@@ -8,34 +9,52 @@ public class TowerInspector : MonoBehaviour
     public TowerPlacementManager placementManager;
 
     public GameObject towerInspectorPanel;
-    private GameObject moneyLabel;
-    private GameObject towerNameText;
-    private GameObject towerDescriptionText;
+    private TextMeshProUGUI moneyLabel;
+    private TextMeshProUGUI towerNameText;
+    private TextMeshProUGUI towerDescriptionText;
     private GameObject targetingModeButton;
     private GameObject sellButton;
-    private GameObject towerStatsText;
     private GameObject damageUpgradeButton;
+    private TextMeshProUGUI damageInfoText;
+    private TextMeshProUGUI damageCostText;
     private GameObject attackSpeedUpgradeButton;
+    private TextMeshProUGUI attackSpeedInfoText;
+    private TextMeshProUGUI attackSpeedCostText;
     private GameObject rangeUpgradeButton;
+    private TextMeshProUGUI rangeInfoText;
+    private TextMeshProUGUI rangeCostText;
     private GameObject[] specialUnlockButtons;
 
     private Tower selectedTower;
 
-    public Color defaultColor;
+    public Color defaultColour;
+    public Color towerRangeColour;
 
 
     private void Start()
     {
         towerInspectorPanel.SetActive(true);
-        moneyLabel = towerInspectorPanel.transform.Find("MoneyLabel").gameObject;
-        towerNameText = towerInspectorPanel.transform.Find("TowerName").gameObject;
-        towerDescriptionText = towerInspectorPanel.transform.Find("TowerDescription").gameObject;
+
+        moneyLabel = towerInspectorPanel.transform.Find("MoneyLabel").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+
+        towerNameText = towerInspectorPanel.transform.Find("TowerName").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+        towerDescriptionText = towerInspectorPanel.transform.Find("TowerDescription").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+
         targetingModeButton = towerInspectorPanel.transform.Find("ChangeTargeting").gameObject;
         sellButton = towerInspectorPanel.transform.Find("SellTower").gameObject;
-        towerStatsText = towerInspectorPanel.transform.Find("TowerStats").gameObject;
+        
         damageUpgradeButton = towerInspectorPanel.transform.Find("DamageUpgrade").gameObject;
+        damageInfoText = damageUpgradeButton.transform.Find("StatText").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+        damageCostText = damageUpgradeButton.transform.Find("UpgradeText").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+
         attackSpeedUpgradeButton = towerInspectorPanel.transform.Find("AttackSpeedUpgrade").gameObject;
+        attackSpeedInfoText = attackSpeedUpgradeButton.transform.Find("StatText").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+        attackSpeedCostText = attackSpeedUpgradeButton.transform.Find("UpgradeText").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+
         rangeUpgradeButton = towerInspectorPanel.transform.Find("RangeUpgrade").gameObject;
+        rangeInfoText = rangeUpgradeButton.transform.Find("StatText").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+        rangeCostText = rangeUpgradeButton.transform.Find("UpgradeText").gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+
         specialUnlockButtons = new GameObject[3];
         for (int i = 0; i < 3; i++)
         {
@@ -47,19 +66,29 @@ public class TowerInspector : MonoBehaviour
 
     private void Update()
     {
-        moneyLabel.GetComponent<TMPro.TextMeshProUGUI>().text = $"Money: ${incomeTracker.currentMoney}";
+        moneyLabel.text = $"Money: ${incomeTracker.currentMoney}";
     }
     
 
     public void SelectTower(Tower tower)
     {
+        if (selectedTower != null)
+        {
+            selectedTower.attackRange.SetIndicatorVisibility(false);
+        }
         selectedTower = tower;
+        selectedTower.attackRange.SetIndicatorColour(towerRangeColour);
+        selectedTower.attackRange.SetIndicatorVisibility(true);
         RefreshText();
     }
 
 
     public void DeselectTower()
     {
+        if (selectedTower != null)
+        {
+            selectedTower.attackRange.SetIndicatorVisibility(false);
+        }
         selectedTower = null;
         RefreshText();
     }
@@ -89,15 +118,17 @@ public class TowerInspector : MonoBehaviour
             sellButton.SetActive(true);
 
             // Tower Stats
-            towerStatsText.GetComponent<TMPro.TextMeshProUGUI>().text = 
-                $"Damage: {selectedTower.damage.ToString("#.00")}\n\nFire Rate: {selectedTower.attackSpeed.ToString("#.00")}\n\nRange: {selectedTower.range.ToString("#.00")}";
+            // towerStatsText.GetComponent<TMPro.TextMeshProUGUI>().text = 
+            //     $"Damage: {selectedTower.damage.ToString("0.00")}\n\nFire Rate: {selectedTower.attackSpeed.ToString("0.00")}\n\nRange: {selectedTower.range.ToString("0.00")}";
+
 
             // Damage Upgrade Button
             if (selectedTower.damageUpgradeLevel >= selectedTower.damageUpgrades.Length)
                 damageUpgradeButton.SetActive(false);
             else
             {
-                damageUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
+                damageInfoText.text = $"Damage: {selectedTower.damage.ToString("0.00")}";
+                damageCostText.text = 
                     $"${selectedTower.damageUpgrades[selectedTower.damageUpgradeLevel].cost} [{selectedTower.damageUpgradeLevel+1}/{selectedTower.damageUpgrades.Length}]";
                 damageUpgradeButton.SetActive(true);
             }
@@ -107,7 +138,8 @@ public class TowerInspector : MonoBehaviour
                 attackSpeedUpgradeButton.SetActive(false);
             else
             {
-                attackSpeedUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
+                attackSpeedInfoText.text = $"Attack Speed: {selectedTower.attackSpeed.ToString("0.00")}";
+                attackSpeedCostText.text = 
                     $"${selectedTower.attackSpeedUpgrades[selectedTower.attackSpeedUpgradeLevel].cost} [{selectedTower.attackSpeedUpgradeLevel+1}/{selectedTower.attackSpeedUpgrades.Length}]";
                 attackSpeedUpgradeButton.SetActive(true);
             }
@@ -117,7 +149,8 @@ public class TowerInspector : MonoBehaviour
                 rangeUpgradeButton.SetActive(false);
             else
             {
-                rangeUpgradeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
+                rangeInfoText.text = $"Range: {selectedTower.range.ToString("0.00")}";
+                rangeCostText.text = 
                     $"${selectedTower.rangeUpgrades[selectedTower.rangeUpgradeLevel].cost} [{selectedTower.rangeUpgradeLevel+1}/{selectedTower.rangeUpgrades.Length}]";
                 rangeUpgradeButton.SetActive(true);
             }
@@ -132,7 +165,7 @@ public class TowerInspector : MonoBehaviour
                 else
                 {
                     specialUnlockButtons[i].GetComponentInChildren<TMPro.TextMeshProUGUI>().text = 
-                        $"- ${selectedTower.specialUpgrades[i].cost} -\n{selectedTower.specialUpgrades[i].name}:\n{selectedTower.specialUpgrades[i].description}";
+                        $"[${selectedTower.specialUpgrades[i].cost}] - {selectedTower.specialUpgrades[i].name}:\n{selectedTower.specialUpgrades[i].description}";
                     specialUnlockButtons[i].SetActive(true);
                 }
             }
@@ -140,13 +173,12 @@ public class TowerInspector : MonoBehaviour
         }
         else
         {
-            towerInspectorPanel.GetComponent<RawImage>().color = defaultColor;
+            towerInspectorPanel.GetComponent<RawImage>().color = defaultColour;
 
             towerNameText.GetComponent<TMPro.TextMeshProUGUI>().text = "";
             towerDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = "";
             targetingModeButton.SetActive(false);
             sellButton.SetActive(false);
-            towerStatsText.GetComponent<TMPro.TextMeshProUGUI>().text = "";
             damageUpgradeButton.SetActive(false);
             attackSpeedUpgradeButton.SetActive(false);
             rangeUpgradeButton.SetActive(false);
