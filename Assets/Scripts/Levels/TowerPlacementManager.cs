@@ -17,7 +17,8 @@ public class TowerPlacementManager : MonoBehaviour
     public TowerInspector towerInspector;
 
     [Header("Tower Prefabs")]
-    public List<TowerPrefabEntry> towerPrefabs = new();
+    public List<GameObject> towerPrefabs = new();
+    public List<GameObject> trapPrefabs = new();
 
     [Header("Preview")]
     public Color validPreviewColor = new Color(0f, 1f, 0f, 0.45f);
@@ -76,6 +77,7 @@ public class TowerPlacementManager : MonoBehaviour
 
     public void SelectTowerByIndex(int index)
     {
+        Debug.Log(index);
         if (index < 0 || index >= towerPrefabs.Count)
         {
             Debug.LogWarning($"Invalid tower index: {index}");
@@ -118,7 +120,7 @@ public class TowerPlacementManager : MonoBehaviour
         if (!IsValidPlacement(gridPos))
             return;
 
-        GameObject towerPrefab = towerPrefabs[selectedTowerIndex].prefab;
+        GameObject towerPrefab = towerPrefabs[selectedTowerIndex];
 
         if (towerPrefab == null)
         {
@@ -203,7 +205,7 @@ public class TowerPlacementManager : MonoBehaviour
         if (selectedTowerIndex < 0 || selectedTowerIndex >= towerPrefabs.Count)
             return;
 
-        GameObject prefab = towerPrefabs[selectedTowerIndex].prefab;
+        GameObject prefab = towerPrefabs[selectedTowerIndex];
         if (prefab == null)
             return;
 
@@ -245,7 +247,7 @@ public class TowerPlacementManager : MonoBehaviour
         if (selectedTowerIndex < 0 || selectedTowerIndex >= towerPrefabs.Count)
             return 0f;
 
-        GameObject prefab = towerPrefabs[selectedTowerIndex].prefab;
+        GameObject prefab = towerPrefabs[selectedTowerIndex];
         if (prefab == null)
             return 0f;
 

@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
     public float speed = 1f;
     public bool flying = false;
     public bool energyImmune = false;
+    public bool isBoss = false;
 
     [Header("Pathing")]
     public float trackProgress = 0f;
@@ -174,7 +175,7 @@ public class Enemy : MonoBehaviour
         trackProgress = 0f;
     }
 
-    public void TakeDamage(float amount, Tower.DamageType damageType, Tower source)
+    public void TakeDamage(float amount, Tower.DamageType damageType, Tower source​)
     {
         if (energyImmune && damageType == Tower.DamageType.Energy)
         {
@@ -206,25 +207,31 @@ public class Enemy : MonoBehaviour
 
         if (currentHP <= 0)
         {
-            if (source != null)
-            {
-                source.attackRange.enemiesInRange.Remove(this);
-            }
-
-            if (incomeTracker != null)
-            {
-                incomeTracker.currentMoney += 25;
-            }
-            if (mapLoader != null)
-            {
-                mapLoader.NotifyEnemyRemoved();
-            }
-            else
-            {
-                Debug.LogWarning("IncomeTracker not found in scene.");
-            }
-            Destroy(gameObject);
+            Die(source);
         }
+    }
+
+
+    public void Die(Tower source)
+    {
+        if (source != null)
+        {
+            source.attackRange.enemiesInRange.Remove(this);
+        }
+
+        if (incomeTracker != null)
+        {
+            incomeTracker.currentMoney += 25;
+        }
+        if (mapLoader != null)
+        {
+            mapLoader.NotifyEnemyRemoved();
+        }
+        else
+        {
+            Debug.LogWarning("IncomeTracker not found in scene.");
+        }
+        Destroy(gameObject);
     }
 
 

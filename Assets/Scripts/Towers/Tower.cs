@@ -88,7 +88,6 @@ public class Tower : MonoBehaviour
     [HideInInspector]
     public TargetPriority targetPriority = TargetPriority.First;
 
-
     protected List<Effect> activeEffects;
 
 
@@ -101,6 +100,17 @@ public class Tower : MonoBehaviour
 
     protected virtual void Update()
     {
+        foreach (Effect effect in activeEffects)
+        {
+            effect.ApplyEffect(this);
+
+            effect.duration -= Time.deltaTime;
+            if (effect.duration <= 0)
+            {
+                activeEffects.Remove(effect);
+            }
+        }
+
         attackCooldown -= Time.deltaTime;
         if (attackCooldown > 0f)
         {
@@ -120,17 +130,6 @@ public class Tower : MonoBehaviour
                 Attack(targets[0]);
             }
             attackCooldown = 1f / attackSpeed;
-        }
-
-        foreach (Effect effect in activeEffects)
-        {
-            effect.ApplyEffect(this);
-
-            effect.duration -= Time.deltaTime;
-            if (effect.duration <= 0)
-            {
-                activeEffects.Remove(effect);
-            }
         }
     }
 
@@ -162,6 +161,7 @@ public class Tower : MonoBehaviour
         towerName = specialUpgrades[pathIndex].newTowerName;
         description += $"\n{specialUpgrades[pathIndex].description}";
     }
+
 
     public void ChangePriority()
     {
