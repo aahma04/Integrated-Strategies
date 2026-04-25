@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     public float trackProgress = 0f;
     public float waypointReachedDistance = 0.05f;
 
-    [HideInInspector]
+    //[HideInInspector]
     public float speedModifier = 1f;
     [HideInInspector]
     public float speedModifierDuration = 0f;
@@ -125,7 +125,7 @@ public class Enemy : MonoBehaviour
         target.z = transform.position.z;
 
         Vector3 oldPosition = transform.position;
-        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target, speed * speedModifier * Time.deltaTime);
 
         trackProgress += Vector3.Distance(oldPosition, transform.position);
 
@@ -203,7 +203,7 @@ public class Enemy : MonoBehaviour
             currentHP -= amount;
         }
 
-        Debug.Log("Damage taken: " + amount + " Current HP: " + currentHP);
+        // Debug.Log("Damage taken: " + amount + " Current HP: " + currentHP);
 
         if (currentHP <= 0)
         {
@@ -231,6 +231,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogWarning("IncomeTracker not found in scene.");
         }
+        transform.position = new Vector3(999f, 999f, 999f);
         Destroy(gameObject);
     }
 

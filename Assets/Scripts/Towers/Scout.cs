@@ -26,8 +26,10 @@ public class Scout : Tower
         }
     }
 
-    protected override void Attack(Enemy target)
+    protected override void Attack(Enemy[] targets)
     {
+        Enemy target = targets[0];
+        
         if (specialUnlocked == 3)
         {
             foreach (Enemy enemy in attackRange.enemiesInRange)
@@ -47,6 +49,8 @@ public class Scout : Tower
             target.TakeDamage(damage, damageType, this);
 
             target.ApplySilence(silenceDuration);
+            
+            StartCoroutine(DoAttackEffect(attackEffect, target));
         }
     }
 }

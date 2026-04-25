@@ -28,8 +28,21 @@ public class Flamethrower : Tower
     }
 
 
-    protected override void Attack(Enemy target)
+    public override void BuySpecial(int pathIndex)
     {
+        base.BuySpecial(pathIndex);
+
+        if (specialUnlocked == 3)
+        {
+            attackNodeScript.checkTiles = true;
+        }
+    }
+
+
+    protected override void Attack(Enemy[] targets)
+    {
+        Enemy target = targets[0];
+
         attackNode.transform.right = target.transform.position - transform.position;
 
         Enemy[] enemiesToHit = attackNodeScript.enemiesInRange.ToArray();
@@ -46,8 +59,13 @@ public class Flamethrower : Tower
         }
         else if (specialUnlocked == 3)
         {
-            // Do lava pools later
+            foreach (GameObject pathTile in attackNodeScript.tilesInRange)
+            {
+                continue;
+            }
         }
+
+        StartCoroutine(DoAttackEffect(attackEffect, target, 0.35f));
     }
 
 
@@ -74,5 +92,28 @@ public class Flamethrower : Tower
             }
         }
         return count;
+    }
+
+
+    public override IEnumerator DoAttackEffect(SpriteRenderer effectSprite, Enemy target, float duration=0.1f)
+    {
+        Transform effectObject = effectSprite.gameObject.transform;
+
+        effectObject.right = target.transform.position - effectObject.position;
+        effectSprite.enabled = true;
+
+        Vector3 startScale = new Vector3(0f, 10f, 10f);
+        Vector3 toScale = new Vector3(10f, 10f, 10f);
+
+        float counter = 0f;
+
+        while (counter < (duration/2))
+        {
+            counter += Time.deltaTime;
+            effectObject.localScale = Vector3.Lerp(startScale, toScale, counter / (duration/2));
+            yield return null;
+        }
+        yield return new WaitForSeconds(duration/2);
+        effectSprite.enabled = false;
     }
 }

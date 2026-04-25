@@ -23,8 +23,10 @@ public class Splash : Tower
     }
 
 
-    protected override void Attack(Enemy target)
+    protected override void Attack(Enemy[] targets)
     {
+        Enemy target = targets[0];
+        
         if (specialUnlocked == 1)
         {
             foreach (Enemy enemy in attackRange.enemiesInRange)
@@ -34,6 +36,8 @@ public class Splash : Tower
         }
         else
         {
+            attackNode.transform.right = target.transform.position - transform.position;
+
             Enemy[] enemiesToHit = attackNodeScript.enemiesInRange.ToArray();
 
             foreach (Enemy enemy in enemiesToHit)
@@ -50,6 +54,8 @@ public class Splash : Tower
                     enemy.ApplyShred(shredAmount, shredDuration);
                 }
             }
+            
+            StartCoroutine(DoAttackEffect(attackEffect, target));
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 public class RapidFire : Tower
 {   
     // Path 1 will upgrade numTargets from Tower class
+    private List<SpriteRenderer> attackEffects;
 
     [Header("Path 2")]
     public float criticalChance;
@@ -14,6 +15,15 @@ public class RapidFire : Tower
     public float adrenalineMultiplier;
 
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        attackEffects = new List<SpriteRenderer>();
+        attackEffects.Add(attackEffect);
+    }
+
+
     public override void BuySpecial(int pathIndex)
     {
         base.BuySpecial(pathIndex);
@@ -21,11 +31,15 @@ public class RapidFire : Tower
         if (specialUnlocked == 1)
         {
             numTargets = 2;
+
+            attackEffects.Add(transform.Find("AttackEffect1").GetComponent<SpriteRenderer>());
+
+            attackEffects[numTargets-1].enabled = false;
         }
     }
 
 
-    protected void MultiAttack(Enemy[] targets)
+    protected override void Attack(Enemy[] targets)
     {
         float attackDamage = damage;
 
@@ -39,9 +53,10 @@ public class RapidFire : Tower
             attackDamage *= ((targets[0].trackProgress / (targets[0].path.Count) * adrenalineMultiplier)+1);
         }
 
-        foreach (Enemy target in targets)
+        for (int i=0; i < targets.Length; i++)
         {
-            target.TakeDamage(attackDamage, damageType, this);
+            targets[i].TakeDamage(attackDamage, damageType, this);
+            StartCoroutine(DoAttackEffect(attackEffects[i], targets[i]));
         }
     }
 }

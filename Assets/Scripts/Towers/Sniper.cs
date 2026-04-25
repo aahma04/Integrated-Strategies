@@ -26,13 +26,17 @@ public class Sniper : Tower
     }
 
 
-    protected override void Attack(Enemy target)
+    protected override void Attack(Enemy[] targets)
     {
+        Enemy target = targets[0];
+        
         target.TakeDamage(damage, damageType, this);
 
         if (specialUnlocked == 3 && Random.value < stunChance)
         {
             target.ApplySlow(1f, stunDuration);
         }
+        
+        StartCoroutine(DoAttackEffect(attackEffect, target));
     }
 }

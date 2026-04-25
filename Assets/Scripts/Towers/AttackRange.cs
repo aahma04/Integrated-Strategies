@@ -7,7 +7,13 @@ public class AttackRange : MonoBehaviour
     private Collider2D rangeCollider;
     private SpriteRenderer rangeIndicator;
 
+    [HideInInspector]
     public List<Enemy> enemiesInRange;
+
+    [HideInInspector]
+    public List<GameObject> tilesInRange;
+
+    public bool checkTiles;
 
 
     private void Awake()
@@ -49,7 +55,7 @@ public class AttackRange : MonoBehaviour
     }
 
 
-    public Enemy[] GetTarget(int numTargets, Transform center, Tower.TargetPriority targetPriority)
+    public Enemy[] GetTarget(int numTargets, Transform center, Tower.TargetPriority targetPriority, List<Enemy> exclude=null)
     {
 
         if (enemiesInRange.Count == 0)
@@ -62,16 +68,18 @@ public class AttackRange : MonoBehaviour
             numTargets = enemiesInRange.Count;
         }
 
+        List<Enemy> candidates = exclude != null ? enemiesInRange.Except(exclude).ToList() : enemiesInRange;
+
         switch (targetPriority)
         {
             case Tower.TargetPriority.First:
-                return enemiesInRange.OrderByDescending(e => e.trackProgress).Take(numTargets).ToArray();
+                return candidates.OrderByDescending(e => e.trackProgress).Take(numTargets).ToArray();
             case Tower.TargetPriority.Last:
-                return enemiesInRange.OrderBy(e => e.trackProgress).Take(numTargets).ToArray();
+                return candidates.OrderBy(e => e.trackProgress).Take(numTargets).ToArray();
             case Tower.TargetPriority.Close:
-                return enemiesInRange.OrderBy(e => Vector2.Distance(center.position, e.transform.position)).Take(numTargets).ToArray();
+                return candidates.OrderBy(e => Vector2.Distance(center.position, e.transform.position)).Take(numTargets).ToArray();
             case Tower.TargetPriority.Strong:
-                return enemiesInRange.OrderByDescending(e => e.maxHP).Take(numTargets).ToArray();
+                return candidates.OrderByDescending(e => e.maxHP).Take(numTargets).ToArray();
         }
 
         return null;
@@ -80,7 +88,6 @@ public class AttackRange : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Collider enter: " + other.name);
         if (other.CompareTag("Enemy"))
         {
             Enemy enemy = other.GetComponent<Enemy>();
@@ -89,6 +96,18 @@ public class AttackRange : MonoBehaviour
                 if (!enemiesInRange.Contains(enemy))
                 {
                     enemiesInRange.Add(enemy);
+                }
+            }
+        }
+
+        if (other.CompareTag("Path") && checkTiles)
+        {
+            GameObject tile = other.gameObject;
+            if (tile != null)
+            {
+                if (!tilesInRange.Contains(tile))
+                {
+                    tilesInRange.Add(tile);
                 }
             }
         }
@@ -101,7 +120,6 @@ public class AttackRange : MonoBehaviour
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy != null)
             {
-                Debug.Log("Enemy exited range: " + enemy.name);
                 enemiesInRange.Remove(enemy);
             }
         }

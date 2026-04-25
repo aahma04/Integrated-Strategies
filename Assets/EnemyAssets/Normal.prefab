@@ -65,8 +65,17 @@ MonoBehaviour:
   speed: 1.5
   flying: 0
   energyImmune: 0
+  isBoss: 0
   trackProgress: 0
   waypointReachedDistance: 0.05
+  speedModifier: 1
+  speedModifierDuration: 0
+  defenseModifier: 0
+  defenseModifierDuration: 0
+  damageModifier: 1
+  damageModifierDuration: 0
+  silenceDuration: 0
+  path: []
 --- !u!50 &1409079283449561984
 Rigidbody2D:
   serializedVersion: 5

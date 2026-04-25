@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -90,11 +91,17 @@ public class Tower : MonoBehaviour
 
     protected List<Effect> activeEffects;
 
+    protected SpriteRenderer attackEffect;
+
 
     protected virtual void Awake()
     {
         attackRange = GetComponentInChildren<AttackRange>();
         activeEffects = new List<Effect>();
+
+        Transform AEObject = transform.Find("AttackEffect");
+        attackEffect = AEObject.GetComponent<SpriteRenderer>();
+        attackEffect.enabled = false;
     }
 
 
@@ -121,28 +128,15 @@ public class Tower : MonoBehaviour
         Enemy[] targets = attackRange.GetTarget(numTargets, transform, targetPriority);
         if (targets != null)
         {
-            if (targets.Length > 1)
-            {
-                MultiAttack(targets);
-            }
-            else
-            {
-                Attack(targets[0]);
-            }
+            Attack(targets);
             attackCooldown = 1f / attackSpeed;
         }
     }
 
 
-    protected virtual void Attack(Enemy target)
+    protected virtual void Attack(Enemy[] targets)
     {
-        target.TakeDamage(damage, damageType, this);
-    }
-
-
-    protected virtual void MultiAttack(Enemy[] targets)
-    {
-        return;
+        targets[0].TakeDamage(damage, damageType, this);
     }
 
 
@@ -178,5 +172,14 @@ public class Tower : MonoBehaviour
             return;
         }
         attackRange.SetRange(newRange);
+    }
+
+
+    public virtual IEnumerator DoAttackEffect(SpriteRenderer effectSprite, Enemy target, float duration=0.1f)
+    {
+        effectSprite.gameObject.transform.right = target.transform.position - effectSprite.gameObject.transform.position;
+        effectSprite.enabled = true;
+        yield return new WaitForSeconds(duration);
+        effectSprite.enabled = false;
     }
 }

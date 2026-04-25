@@ -1096,7 +1096,8 @@ MonoBehaviour:
   incomeTracker: {fileID: 1276002862}
   placementManager: {fileID: 2088503387}
   towerInspectorPanel: {fileID: 48956919}
-  defaultColor: {r: 0.29411766, g: 0.3019608, b: 0.3019608, a: 1}
+  defaultColour: {r: 0, g: 0, b: 0, a: 0}
+  towerRangeColour: {r: 0, g: 0, b: 0, a: 0}
 --- !u!4 &239585519
 Transform:
   m_ObjectHideFlags: 0
@@ -6266,18 +6267,17 @@ MonoBehaviour:
   mainCamera: {fileID: 1370791164}
   towerInspector: {fileID: 239585518}
   towerPrefabs:
-  - towerName: Rapid Fire
-    prefab: {fileID: 8840116011609496742, guid: bbc732f0c085aa647a7ae2f7fe6f858d, type: 3}
-  - towerName: Sniper
-    prefab: {fileID: 8840116011609496742, guid: b5d60c4edc3f7b841aa1b1f147508c22, type: 3}
-  - towerName: Splash
-    prefab: {fileID: 8840116011609496742, guid: feb96d2308c16c24c8492edd924d1735, type: 3}
-  - towerName: Slower
-    prefab: {fileID: 8840116011609496742, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
-  - towerName: Flamethrower
-    prefab: {fileID: 8840116011609496742, guid: 0fcab69ebe3e6974da0d3f4f02fb92ff, type: 3}
-  - towerName: Laser
-    prefab: {fileID: 8840116011609496742, guid: ab00e100d3a0f3844858d61b520d58f4, type: 3}
+  - {fileID: 8840116011609496742, guid: bbc732f0c085aa647a7ae2f7fe6f858d, type: 3}
+  - {fileID: 8840116011609496742, guid: b5d60c4edc3f7b841aa1b1f147508c22, type: 3}
+  - {fileID: 8840116011609496742, guid: feb96d2308c16c24c8492edd924d1735, type: 3}
+  - {fileID: 8840116011609496742, guid: 8ad4a179ac1d1c44d888701702615317, type: 3}
+  - {fileID: 8840116011609496742, guid: 0fcab69ebe3e6974da0d3f4f02fb92ff, type: 3}
+  - {fileID: 8840116011609496742, guid: ab00e100d3a0f3844858d61b520d58f4, type: 3}
+  trapPrefabs:
+  - {fileID: 8840116011609496742, guid: f42efb77c5387fb43a4ca32595187c00, type: 3}
+  - {fileID: 8840116011609496742, guid: 1c69e1038053065478b5b2cff87b8d1e, type: 3}
+  - {fileID: 8840116011609496742, guid: 4afe2832eff2093409bd6b9f274e0c42, type: 3}
+  - {fileID: 8840116011609496742, guid: 3e67e1859389a3b49acec59813108e85, type: 3}
   validPreviewColor: {r: 0, g: 1, b: 0, a: 0.45}
   invalidPreviewColor: {r: 1, g: 0, b: 0, a: 0.45}
   validRangeColor: {r: 0, g: 0.7, b: 1, a: 0.18}
