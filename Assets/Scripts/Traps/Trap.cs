@@ -30,7 +30,10 @@ public class Trap : MonoBehaviour
     protected void Awake()
     {
         attackRange = GetComponentInChildren<AttackRange>();
-        attackRange.SetRange(range);
+        if (attackRange != null)
+        {
+            attackRange.SetRange(range);
+        }
     }
 
 

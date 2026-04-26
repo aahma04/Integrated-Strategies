@@ -45,6 +45,7 @@ public class AttackRange : MonoBehaviour
         if (rangeIndicator != null)
         {
             rangeIndicator.enabled = visibility;
+            Debug.Log($"indicator enabled: {rangeIndicator.enabled}");
         }
     }
 

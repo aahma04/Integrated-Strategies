@@ -575,6 +575,14 @@ public class MapLoader : MonoBehaviour
     {
         return new Vector3(gridPos.x * tileSize, gridPos.y * tileSize, -2f);
     }
+    
+    public Vector2Int WorldToGrid(Vector3 worldPos)
+    {
+            return new Vector2Int(
+                Mathf.RoundToInt(worldPos.x / tileSize),
+                Mathf.RoundToInt(worldPos.y / tileSize)
+            );
+    }
 
     public List<Vector3> GetPathForStart(char startSymbol)
     {
@@ -839,10 +847,7 @@ public class MapLoader : MonoBehaviour
     //HELPER FUNCTIONS SO OTHER FILES CAN ACCESS POSITIONING/TILE INFO
     public bool TryGetGridPositionFromWorld(Vector3 worldPos, out Vector2Int gridPos)
     {
-        gridPos = new Vector2Int(
-            Mathf.RoundToInt(worldPos.x / tileSize),
-            Mathf.RoundToInt(worldPos.y / tileSize)
-        );
+        gridPos = WorldToGrid(worldPos);
 
         return IsInBounds(gridPos);
     }

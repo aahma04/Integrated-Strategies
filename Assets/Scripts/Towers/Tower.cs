@@ -48,6 +48,7 @@ public class Tower : MonoBehaviour
     public string description;
     public int cost;
     public Color towerColor;
+    public bool isUnlocked = false;
 
     [Header("Basic Attributes")]
     // public float maxHP = 10f;

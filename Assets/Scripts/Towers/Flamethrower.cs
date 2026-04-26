@@ -5,6 +5,8 @@ public class Flamethrower : Tower
 {
     [Header("General")]
     public float burnDuration;
+    private Vector3 attackEffectMinScale;
+    private Vector3 attackEffectMaxScale;
 
     [Header("Path 1")]
     public int burnStackLimit = 1;
@@ -25,6 +27,9 @@ public class Flamethrower : Tower
         base.Awake();
         attackNode = transform.Find("AttackNode").gameObject;
         attackNodeScript = attackNode.GetComponent<AttackRange>();
+
+        attackEffectMaxScale = attackEffect.gameObject.transform.localScale;
+        attackEffectMinScale = new Vector3(0f, attackEffectMaxScale.y, attackEffectMaxScale.z);
     }
 
 
@@ -102,15 +107,12 @@ public class Flamethrower : Tower
         effectObject.right = target.transform.position - effectObject.position;
         effectSprite.enabled = true;
 
-        Vector3 startScale = new Vector3(0f, 10f, 10f);
-        Vector3 toScale = new Vector3(10f, 10f, 10f);
-
-        float counter = 0f;
+        float counter = 0f; 
 
         while (counter < (duration/2))
         {
             counter += Time.deltaTime;
-            effectObject.localScale = Vector3.Lerp(startScale, toScale, counter / (duration/2));
+            effectObject.localScale = Vector3.Lerp(attackEffectMinScale, attackEffectMaxScale, counter / (duration/2));
             yield return null;
         }
         yield return new WaitForSeconds(duration/2);

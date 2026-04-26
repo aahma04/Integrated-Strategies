@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     public float trackProgress = 0f;
     public float waypointReachedDistance = 0.05f;
 
-    //[HideInInspector]
+    [HideInInspector]
     public float speedModifier = 1f;
     [HideInInspector]
     public float speedModifierDuration = 0f;
