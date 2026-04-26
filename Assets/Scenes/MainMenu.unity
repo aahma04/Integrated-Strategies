@@ -1337,9 +1337,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 463824857}
     m_Modifications:
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1833016766}
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenLorePage
+      objectReference: {fileID: 0}
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainMenuController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1509842281748163395, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1879062755956240220, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
       propertyPath: m_text
-      value: 'Settings [WIP]'
+      value: Lore Page
       objectReference: {fileID: 0}
     - target: {fileID: 1879062755956240220, guid: 5ad0ad82466e7494ba9cbc598b6db378, type: 3}
       propertyPath: m_fontSize

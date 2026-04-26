@@ -24,8 +24,19 @@ public class MainMenuController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    public void OpenLorePage()
+    {
+        SceneManager.LoadScene("LorePage");
+    }
+
+    public void OpenMainMenuPage()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
     public void Quit()
     {
         Application.Quit();
     }
+
 }
