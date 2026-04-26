@@ -1,12 +1,19 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioHandler : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         DontDestroyOnLoad(this);
     }
 
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        if (scene.name != "Level") {
+            Destroy(gameObject);
+        }
+    }
     
 }
