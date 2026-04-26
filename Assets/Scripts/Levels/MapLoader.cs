@@ -13,7 +13,8 @@ public class EnemyPrefabEntry
 public enum SpawnInstructionType
 {
     Enemy,
-    Break
+    Break,
+    WaveEnd
 }
 
 [System.Serializable]
@@ -55,6 +56,9 @@ public class MapLoader : MonoBehaviour
     [Header("Tower Inspector")]
     public TowerInspector towerInspector;
 
+    [Header("Perks")]
+    public PerkManager perkManager;
+
     private Dictionary<char, char> startToEnd = new();
     private Dictionary<char, List<SpawnInstruction>> spawnInstructionsByStart = new();
 
@@ -69,7 +73,13 @@ public class MapLoader : MonoBehaviour
     private int activeSpawnerCount = 0;
 
     private bool levelStarted;
-    
+
+    // Wave system
+    private int spawnersWaitingForWaveEnd = 0;
+    private int waveIndex = 0;           // increments each time a wave ends
+    private int waveIndexAtResume = 0;   // set when player presses P
+    private bool waitingForPlayerInput = false;
+
 
     private char[,] grid;
 
@@ -81,11 +91,21 @@ public class MapLoader : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P) && levelStarted == false)
+        if (Input.GetKeyDown(KeyCode.P) && (!levelStarted || waitingForPlayerInput))
         {
-            StartAllSpawns();
             pressP.SetActive(false);
-            levelStarted = true;
+
+            if (!levelStarted)
+            {
+                StartAllSpawns();
+                levelStarted = true;
+            }
+            else if (waitingForPlayerInput)
+            {
+                waitingForPlayerInput = false;
+                waveIndex++;
+                waveIndexAtResume = waveIndex;
+            }
         }
     }
 
@@ -174,6 +194,9 @@ public class MapLoader : MonoBehaviour
         GenerateAllPaths();
         PositionCamera();
         SpawnTiles();
+
+        if (perkManager != null)
+            perkManager.PlaceStartingTower();
     }
 
     void ParseStartEnd(string line)
@@ -236,7 +259,14 @@ public class MapLoader : MonoBehaviour
                 continue;
             }
 
-            if (name == "break")
+            if (name == "waveend")
+            {
+                instructions.Add(new SpawnInstruction
+                {
+                    type = SpawnInstructionType.WaveEnd
+                });
+            }
+            else if (name == "break")
             {
                 instructions.Add(new SpawnInstruction
                 {
@@ -370,55 +400,55 @@ public class MapLoader : MonoBehaviour
     }
 
     void PositionCamera()
-{
-    if (mainCamera == null)
     {
-        Debug.LogWarning("Main camera not assigned.");
-        return;
+        if (mainCamera == null)
+        {
+            Debug.LogWarning("Main camera not assigned.");
+            return;
+        }
+
+        int width = grid.GetLength(0);
+        int height = grid.GetLength(1);
+
+        float worldWidth = width * tileSize;
+        float worldHeight = height * tileSize;
+
+        float reservedRightPercent = 0.25f;
+        float reservedBottomPercent = 0.25f;
+
+        float usableWidthPercent = 1f - reservedRightPercent;   // 0.75
+        float usableHeightPercent = 1f - reservedBottomPercent; // 0.75
+
+        float fullAspect = (float)Screen.width / Screen.height;
+
+        float usableAspect = (Screen.width * usableWidthPercent) / (Screen.height * usableHeightPercent);
+
+        float verticalSize = worldHeight / 2f + cameraPadding;
+        float horizontalSize = (worldWidth / usableAspect) / 2f + cameraPadding;
+
+        mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize);
+
+        float visibleWorldHeight = mainCamera.orthographicSize * 2f;
+        float visibleWorldWidth = visibleWorldHeight * fullAspect;
+
+        // Usable area center in normalized screen space:
+        // x goes from 0 to 0.75, so center is 0.375
+        // y goes from 0.25 to 1.0, so center is 0.625
+        float usableCenterXNormalized = usableWidthPercent / 2f;
+        float usableCenterYNormalized = reservedBottomPercent + usableHeightPercent / 2f;
+
+        float usableCenterOffsetX = (usableCenterXNormalized - 0.5f) * visibleWorldWidth;
+        float usableCenterOffsetY = (usableCenterYNormalized - 0.5f) * visibleWorldHeight;
+
+        float mapCenterX = (worldWidth - tileSize) / 2f;
+        float mapCenterY = (worldHeight - tileSize) / 2f;
+
+        mainCamera.transform.position = new Vector3(
+            mapCenterX - usableCenterOffsetX,
+            mapCenterY - usableCenterOffsetY,
+            mainCamera.transform.position.z
+        );
     }
-
-    int width = grid.GetLength(0);
-    int height = grid.GetLength(1);
-
-    float worldWidth = width * tileSize;
-    float worldHeight = height * tileSize;
-
-    float reservedRightPercent = 0.25f;
-    float reservedBottomPercent = 0.25f;
-
-    float usableWidthPercent = 1f - reservedRightPercent;   // 0.75
-    float usableHeightPercent = 1f - reservedBottomPercent; // 0.75
-
-    float fullAspect = (float)Screen.width / Screen.height;
-
-    float usableAspect = (Screen.width * usableWidthPercent) / (Screen.height * usableHeightPercent);
-
-    float verticalSize = worldHeight / 2f + cameraPadding;
-    float horizontalSize = (worldWidth / usableAspect) / 2f + cameraPadding;
-
-    mainCamera.orthographicSize = Mathf.Max(verticalSize, horizontalSize);
-
-    float visibleWorldHeight = mainCamera.orthographicSize * 2f;
-    float visibleWorldWidth = visibleWorldHeight * fullAspect;
-
-    // Usable area center in normalized screen space:
-    // x goes from 0 to 0.75, so center is 0.375
-    // y goes from 0.25 to 1.0, so center is 0.625
-    float usableCenterXNormalized = usableWidthPercent / 2f;
-    float usableCenterYNormalized = reservedBottomPercent + usableHeightPercent / 2f;
-
-    float usableCenterOffsetX = (usableCenterXNormalized - 0.5f) * visibleWorldWidth;
-    float usableCenterOffsetY = (usableCenterYNormalized - 0.5f) * visibleWorldHeight;
-
-    float mapCenterX = (worldWidth - tileSize) / 2f;
-    float mapCenterY = (worldHeight - tileSize) / 2f;
-
-    mainCamera.transform.position = new Vector3(
-        mapCenterX - usableCenterOffsetX,
-        mapCenterY - usableCenterOffsetY,
-        mainCamera.transform.position.z
-    );
-}
 
     void GenerateAllPaths()
     {
@@ -604,6 +634,8 @@ public class MapLoader : MonoBehaviour
         if (instructions == null || instructions.Count == 0)
         {
             Debug.LogWarning($"No spawn instructions found for start '{startSymbol}'.");
+            activeSpawnerCount--;
+            CheckLevelComplete();
             yield break;
         }
 
@@ -613,12 +645,26 @@ public class MapLoader : MonoBehaviour
         if (path == null || path.Count == 0)
         {
             Debug.LogError($"No path found for start '{startSymbol}'.");
+            activeSpawnerCount--;
+            CheckLevelComplete();
             yield break;
         }
 
         foreach (SpawnInstruction instruction in instructions)
         {
-            if (instruction.type == SpawnInstructionType.Break)
+            if (instruction.type == SpawnInstructionType.WaveEnd)
+            {
+                // Record which wave we're waiting on, then signal arrival
+                int myWaveIndex = waveIndex;
+                spawnersWaitingForWaveEnd++;
+                CheckWaveEnd();
+
+                // Block until the player has pressed P for THIS wave
+                yield return new WaitUntil(() => waveIndexAtResume > myWaveIndex);
+
+                spawnersWaitingForWaveEnd--;
+            }
+            else if (instruction.type == SpawnInstructionType.Break)
             {
                 yield return new WaitForSeconds(instruction.delay);
             }
@@ -641,6 +687,9 @@ public class MapLoader : MonoBehaviour
                     enemyScript.SetPath(path);
                     enemyScript.SetMapLoader(this);
                     enemyScript.SetTargetEnd(startToEnd[startSymbol]);
+
+                    if (perkManager != null)
+                        perkManager.ApplyToEnemy(enemyScript);
                 }
                 else
                 {
@@ -653,6 +702,31 @@ public class MapLoader : MonoBehaviour
 
         activeSpawnerCount--;
         CheckLevelComplete();
+    }
+
+    // Called each time a spawner reaches a waveend. Shows P prompt once all
+    // spawners are waiting AND no enemies remain on the field.
+    void CheckWaveEnd()
+    {
+        if (spawnersWaitingForWaveEnd < spawnInstructionsByStart.Count)
+            return; // not all spawners at the barrier yet
+
+        waitingForPlayerInput = true;
+        StartCoroutine(WaitForEnemiesThenPrompt());
+    }
+
+    IEnumerator WaitForEnemiesThenPrompt()
+    {
+        yield return new WaitUntil(() => activeEnemyCount == 0);
+
+        pressP.SetActive(true);
+    }
+
+    void ResumeAllSpawners()
+    {
+        // waitingForPlayerInput = false is already set before this is called.
+        // The WaitUntil(() => !waitingForPlayerInput) in each coroutine will
+        // automatically unblock all waiting spawners.
     }
 
     void OnDrawGizmos()
@@ -707,6 +781,8 @@ public class MapLoader : MonoBehaviour
 
     void AdvanceToNextLevel()
     {
+        PlayerProgress.AddXP(100);
+
         LevelSequence.currentLevelIndex++;
 
         LevelSequence levelSequence = FindAnyObjectByType<LevelSequence>();
@@ -748,6 +824,7 @@ public class MapLoader : MonoBehaviour
 
     public void GameOver()
     {
+        PlayerProgress.AddXP(50);
 
         if (gameOverText != null)
         {

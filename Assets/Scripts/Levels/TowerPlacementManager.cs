@@ -15,6 +15,7 @@ public class TowerPlacementManager : MonoBehaviour
     public MapLoader mapLoader;
     public Camera mainCamera;
     public TowerInspector towerInspector;
+    public PerkManager perkManager;
 
     [Header("Tower Prefabs")]
     public List<GameObject> towerPrefabs = new();
@@ -27,10 +28,18 @@ public class TowerPlacementManager : MonoBehaviour
     public Color invalidRangeColor = new Color(1f, 0.2f, 0.2f, 0.18f);
 
     private int selectedTowerIndex = -1;
+    private int selectedTrapIndex = -1;
+    private bool placingTrap = false;
     private GameObject previewObject;
     private RangeCirclePreview rangePreview;
 
     private readonly Dictionary<Vector2Int, TowerInstance> placedTowers = new();
+
+    // Free starting tower state
+    private bool placingFreeStartingTower = false;
+    private int freeStartingTowerOriginalCost = 0;
+    private GameObject freeStartingTowerPrefab = null;
+    private PerkManager freeStartingTowerPerkManager = null;
 
     void Start()
     {
@@ -42,7 +51,11 @@ public class TowerPlacementManager : MonoBehaviour
         if (mainCamera == null || mapLoader == null)
             return;
 
-        if (selectedTowerIndex < 0 || selectedTowerIndex >= towerPrefabs.Count)
+        bool hasSelection = placingTrap
+            ? (selectedTrapIndex >= 0 && selectedTrapIndex < trapPrefabs.Count)
+            : (selectedTowerIndex >= 0 && selectedTowerIndex < towerPrefabs.Count);
+
+        if (!hasSelection)
         {
             HidePreviews();
             return;
@@ -59,14 +72,18 @@ public class TowerPlacementManager : MonoBehaviour
 
         Vector3 snappedPos = mapLoader.GetSnappedWorldPosition(gridPos);
 
-        bool isValid = IsValidPlacement(gridPos);
+        bool isValid = placingTrap ? IsValidTrapPlacement(gridPos) : IsValidPlacement(gridPos);
+        float previewRange = placingTrap ? GetSelectedTrapRange() : GetSelectedTowerRange();
 
         ShowPreviewAt(snappedPos, isValid);
-        ShowRangeAt(snappedPos, GetSelectedTowerRange(), isValid);
+        ShowRangeAt(snappedPos, previewRange, isValid);
 
         if (Input.GetMouseButtonDown(0))
         {
-            TryPlaceSelectedTower(gridPos, snappedPos);
+            if (placingTrap)
+                TryPlaceSelectedTrap(gridPos, snappedPos);
+            else
+                TryPlaceSelectedTower(gridPos, snappedPos);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -88,9 +105,34 @@ public class TowerPlacementManager : MonoBehaviour
         RebuildPreviewObject();
     }
 
+    public void SelectFreeStartingTower(int index, int originalCost, PerkManager perkManager)
+    {
+        placingFreeStartingTower = true;
+        freeStartingTowerOriginalCost = originalCost;
+        freeStartingTowerPrefab = towerPrefabs[index];
+        freeStartingTowerPerkManager = perkManager;
+        SelectTowerByIndex(index);
+    }
+
+    public void SelectTrapByIndex(int index)
+    {
+        if (index < 0 || index >= trapPrefabs.Count)
+        {
+            Debug.LogWarning($"Invalid trap index: {index}");
+            return;
+        }
+
+        selectedTrapIndex = index;
+        selectedTowerIndex = -1;
+        placingTrap = true;
+        RebuildPreviewObject(trapPrefabs[index]);
+    }
+
     public void ClearSelection()
     {
         selectedTowerIndex = -1;
+        selectedTrapIndex = -1;
+        placingTrap = false;
 
         if (previewObject != null)
         {
@@ -99,6 +141,57 @@ public class TowerPlacementManager : MonoBehaviour
         }
 
         HidePreviews();
+    }
+
+    bool IsValidTrapPlacement(Vector2Int gridPos)
+    {
+        if (!mapLoader.IsValidGridPosition(gridPos)) return false;
+        if (selectedTrapIndex < 0 || selectedTrapIndex >= trapPrefabs.Count) return false;
+
+        Trap trap = trapPrefabs[selectedTrapIndex].GetComponent<Trap>();
+        if (trap == null) return false;
+
+        switch (trap.placementType)
+        {
+            case Trap.PlacementType.Path:
+                return mapLoader.IsPathTile(gridPos) || mapLoader.IsStartOrEndTile(gridPos);
+            case Trap.PlacementType.Field:
+                return mapLoader.IsGrassTile(gridPos);
+            case Trap.PlacementType.Any:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    void TryPlaceSelectedTrap(Vector2Int gridPos, Vector3 snappedPos)
+    {
+        if (!IsValidTrapPlacement(gridPos)) return;
+
+        GameObject trapPrefab = trapPrefabs[selectedTrapIndex];
+        if (trapPrefab == null) return;
+
+        Trap trapScript = trapPrefab.GetComponent<Trap>();
+        int cost = trapScript != null ? trapScript.cost : 0;
+
+        if (perkManager != null)
+            cost = perkManager.GetTrapCost(cost);
+
+        if (towerInspector.incomeTracker.currentMoney < cost) return;
+
+        towerInspector.incomeTracker.currentMoney -= cost;
+
+        Instantiate(trapPrefab, snappedPos, Quaternion.identity);
+        ClearSelection();
+    }
+
+    float GetSelectedTrapRange()
+    {
+        if (selectedTrapIndex < 0 || selectedTrapIndex >= trapPrefabs.Count) return 0f;
+        GameObject prefab = trapPrefabs[selectedTrapIndex];
+        if (prefab == null) return 0f;
+        Trap trap = prefab.GetComponent<Trap>();
+        return trap != null ? trap.range : 0f;
     }
 
     bool IsValidPlacement(Vector2Int gridPos)
@@ -146,6 +239,20 @@ public class TowerPlacementManager : MonoBehaviour
 
         towerInstance.Initialize(gridPos, towerInspector);
         placedTowers[gridPos] = towerInstance;
+
+        Tower tower = placedTower.GetComponent<Tower>();
+        if (perkManager != null && tower != null)
+            perkManager.ApplyToTower(tower);
+
+        // Restore the prefab's original cost after free placement
+        if (placingFreeStartingTower && freeStartingTowerPerkManager != null)
+        {
+            freeStartingTowerPerkManager.RestoreStartingTowerCost(freeStartingTowerPrefab, freeStartingTowerOriginalCost);
+            placingFreeStartingTower = false;
+            freeStartingTowerPrefab = null;
+            freeStartingTowerPerkManager = null;
+        }
+
         ClearSelection();
     }
 
@@ -170,7 +277,8 @@ public class TowerPlacementManager : MonoBehaviour
     {
         if (previewObject == null)
         {
-            RebuildPreviewObject();
+            RebuildPreviewObject(placingTrap && selectedTrapIndex >= 0 && selectedTrapIndex < trapPrefabs.Count
+                ? trapPrefabs[selectedTrapIndex] : null);
         }
 
         if (previewObject == null)
@@ -194,7 +302,7 @@ public class TowerPlacementManager : MonoBehaviour
         }
     }
 
-    void RebuildPreviewObject()
+    void RebuildPreviewObject(GameObject prefabOverride = null)
     {
         if (previewObject != null)
         {
@@ -202,10 +310,14 @@ public class TowerPlacementManager : MonoBehaviour
             previewObject = null;
         }
 
-        if (selectedTowerIndex < 0 || selectedTowerIndex >= towerPrefabs.Count)
-            return;
+        GameObject prefab = prefabOverride;
+        if (prefab == null)
+        {
+            if (selectedTowerIndex < 0 || selectedTowerIndex >= towerPrefabs.Count)
+                return;
+            prefab = towerPrefabs[selectedTowerIndex];
+        }
 
-        GameObject prefab = towerPrefabs[selectedTowerIndex];
         if (prefab == null)
             return;
 

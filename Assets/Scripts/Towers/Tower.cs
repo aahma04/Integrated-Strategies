@@ -136,7 +136,13 @@ public class Tower : MonoBehaviour
 
     protected virtual void Attack(Enemy[] targets)
     {
-        targets[0].TakeDamage(damage, damageType, this);
+        float finalDamage = damage;
+
+        PerkManager perkManager = FindAnyObjectByType<PerkManager>();
+        if (perkManager != null && targets[0].isBoss && PerkManager.bossAlive)
+            finalDamage *= perkManager.globalDamageVsBossMultiplier;
+
+        targets[0].TakeDamage(finalDamage, damageType, this);
     }
 
 
@@ -175,7 +181,7 @@ public class Tower : MonoBehaviour
     }
 
 
-    public virtual IEnumerator DoAttackEffect(SpriteRenderer effectSprite, Enemy target, float duration=0.1f)
+    public virtual IEnumerator DoAttackEffect(SpriteRenderer effectSprite, Enemy target, float duration = 0.1f)
     {
         effectSprite.gameObject.transform.right = target.transform.position - effectSprite.gameObject.transform.position;
         effectSprite.enabled = true;

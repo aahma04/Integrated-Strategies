@@ -221,15 +221,28 @@ public class Enemy : MonoBehaviour
 
         if (incomeTracker != null)
         {
-            incomeTracker.currentMoney += 25;
+            int goldReward = 25;
+            PerkManager perkManager = FindAnyObjectByType<PerkManager>();
+            if (perkManager != null)
+                goldReward = perkManager.ApplyGoldBonus(goldReward);
+
+            incomeTracker.currentMoney += goldReward;
         }
+
+        if (isBoss)
+        {
+            PerkManager perkManager = FindAnyObjectByType<PerkManager>();
+            if (perkManager != null)
+                perkManager.NotifyBossDied();
+        }
+
         if (mapLoader != null)
         {
             mapLoader.NotifyEnemyRemoved();
         }
         else
         {
-            Debug.LogWarning("IncomeTracker not found in scene.");
+            Debug.LogWarning("MapLoader not found in scene.");
         }
         transform.position = new Vector3(999f, 999f, 999f);
         Destroy(gameObject);
