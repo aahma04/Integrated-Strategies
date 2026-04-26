@@ -126,7 +126,7 @@ public class AttackRange : MonoBehaviour
     {
         tilesInRange.Clear();
         List<Collider2D> results = new List<Collider2D>();
-        rangeCollider.OverlapCollider(new ContactFilter2D().NoFilter(), results);
+        rangeCollider.Overlap(new ContactFilter2D().NoFilter(), results);
 
         foreach (Collider2D col in results)
         {

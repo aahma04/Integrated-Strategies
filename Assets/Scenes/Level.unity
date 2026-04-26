@@ -2777,8 +2777,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelSequence
   mapLoader: {fileID: 1129064180}
   levels:
-  - {fileID: 4900000, guid: 197e2ca1b5edeb14899db58ea3a8fbfb, type: 3}
   - {fileID: 4900000, guid: 47a16a9dd8543f74f98e8cb8fe77b7bd, type: 3}
+  - {fileID: 4900000, guid: 197e2ca1b5edeb14899db58ea3a8fbfb, type: 3}
   - {fileID: 4900000, guid: 09689f59d106c5a4fa99563684c14ccb, type: 3}
 --- !u!4 &895127656
 Transform:
