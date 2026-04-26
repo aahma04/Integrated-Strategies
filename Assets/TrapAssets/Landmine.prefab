@@ -160,7 +160,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 6
+  m_Radius: 0.5
 --- !u!114 &1445210174556628840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,7 +289,7 @@ MonoBehaviour:
   cost: 0
   trapColor: {r: 0, g: 0, b: 0, a: 0}
   damage: 400
-  range: 2
+  range: 1
   duration: 9999
   damageType: 0
   placementType: 0

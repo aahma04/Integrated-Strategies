@@ -28,15 +28,7 @@ public class AttackRange : MonoBehaviour
 
     public void SetRange(float newRange)
     {
-        if (rangeCollider is CircleCollider2D circle)
-        {
-            circle.radius = newRange;
-        }
-
-        if (rangeIndicator != null)
-        {
-            rangeIndicator.transform.localScale = newRange * new Vector3(2f, 2f, 2f);
-        }
+        transform.localScale = newRange * new Vector3(2f, 2f, 2f);
     }
 
 
@@ -45,7 +37,6 @@ public class AttackRange : MonoBehaviour
         if (rangeIndicator != null)
         {
             rangeIndicator.enabled = visibility;
-            Debug.Log($"indicator enabled: {rangeIndicator.enabled}");
         }
     }
 
@@ -58,7 +49,6 @@ public class AttackRange : MonoBehaviour
 
     public Enemy[] GetTarget(int numTargets, Transform center, Tower.TargetPriority targetPriority, List<Enemy> exclude=null)
     {
-
         if (enemiesInRange.Count == 0)
         {
             return null;
@@ -96,23 +86,28 @@ public class AttackRange : MonoBehaviour
             {
                 if (!enemiesInRange.Contains(enemy))
                 {
+                    // Debug.Log("Adding enemy");
                     enemiesInRange.Add(enemy);
                 }
             }
         }
-
-        if (other.CompareTag("Path") && checkTiles)
-        {
-            GameObject tile = other.gameObject;
-            if (tile != null)
-            {
-                if (!tilesInRange.Contains(tile))
-                {
-                    tilesInRange.Add(tile);
-                }
-            }
-        }
     }
+
+    // private void OnTriggerStay2D(Collider2D other)
+    // {
+    //     Debug.Log($"compare tag: {other.CompareTag("Path")}, check tile: {checkTiles}");
+    //     if (other.CompareTag("Path") && checkTiles)
+    //     {
+    //         GameObject tile = other.gameObject;
+    //         if (tile != null)
+    //         {
+    //             if (!tilesInRange.Contains(tile))
+    //             {
+    //                 tilesInRange.Add(tile);
+    //             }
+    //         }
+    //     }
+    // }
 
     private void OnTriggerExit2D(Collider2D other)
     {
@@ -121,7 +116,23 @@ public class AttackRange : MonoBehaviour
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy != null)
             {
+                // Debug.Log("Removing enemy");
                 enemiesInRange.Remove(enemy);
+            }
+        }
+    }
+
+    public void PopulateTilesInRange()
+    {
+        tilesInRange.Clear();
+        List<Collider2D> results = new List<Collider2D>();
+        rangeCollider.OverlapCollider(new ContactFilter2D().NoFilter(), results);
+
+        foreach (Collider2D col in results)
+        {
+            if (col.CompareTag("Path"))
+            {
+                tilesInRange.Add(col.gameObject);
             }
         }
     }

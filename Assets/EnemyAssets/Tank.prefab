@@ -65,8 +65,17 @@ MonoBehaviour:
   speed: 0.5
   flying: 0
   energyImmune: 0
+  isBoss: 0
   trackProgress: 0
   waypointReachedDistance: 0.05
+  speedModifier: 1
+  speedModifierDuration: 0
+  defenseModifier: 0
+  defenseModifierDuration: 0
+  damageModifier: 1
+  damageModifierDuration: 0
+  silenceDuration: 0
+  path: []
 --- !u!50 &1409079283449561984
 Rigidbody2D:
   serializedVersion: 5
@@ -363,7 +372,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

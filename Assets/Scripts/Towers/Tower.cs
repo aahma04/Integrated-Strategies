@@ -127,7 +127,7 @@ public class Tower : MonoBehaviour
 
         attackRange.SetRange(range);
         Enemy[] targets = attackRange.GetTarget(numTargets, transform, targetPriority);
-        if (targets != null)
+        if (targets != null && targets.Length > 0)
         {
             Attack(targets);
             attackCooldown = 1f / attackSpeed;

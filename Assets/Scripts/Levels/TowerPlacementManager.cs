@@ -151,6 +151,7 @@ public class TowerPlacementManager : MonoBehaviour
         Trap trap = trapPrefabs[selectedTrapIndex].GetComponent<Trap>();
         if (trap == null) return false;
 
+        Debug.Log($"Placement type: {trap.placementType}");
         switch (trap.placementType)
         {
             case Trap.PlacementType.Path:
@@ -183,6 +184,37 @@ public class TowerPlacementManager : MonoBehaviour
 
         Instantiate(trapPrefab, snappedPos, Quaternion.identity);
         ClearSelection();
+    }
+
+    public void TryPlaceTrap(Vector2Int gridPos, Vector3 snappedPos, GameObject trapPrefab)
+    {
+        int temp_selectedTrapIndex = selectedTrapIndex;
+
+        selectedTrapIndex = 3;
+
+        // Debug.Log("beginning trap placement");
+        // if (!IsValidTrapPlacement(gridPos)) return;
+
+        // Debug.Log("after IsValidTrapPlacement");
+        // if (trapPrefab == null) return;
+
+        // Debug.Log("after trapPrefab == null");
+        // Trap trapScript = trapPrefab.GetComponent<Trap>();
+        // int cost = trapScript != null ? trapScript.cost : 0;
+
+        // if (perkManager != null)
+        //     cost = perkManager.GetTrapCost(cost);
+
+        // if (towerInspector.incomeTracker.currentMoney < cost) return;
+        // Debug.Log("after money check");
+
+        // towerInspector.incomeTracker.currentMoney -= cost;
+
+        // Instantiate(trapPrefab, snappedPos, Quaternion.identity);
+
+        TryPlaceSelectedTrap(gridPos, snappedPos);
+
+        selectedTrapIndex = temp_selectedTrapIndex;
     }
 
     float GetSelectedTrapRange()

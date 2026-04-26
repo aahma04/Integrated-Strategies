@@ -349,7 +349,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 4
+  m_Radius: 0.5
 --- !u!114 &3750499160630988068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -574,7 +574,7 @@ MonoBehaviour:
   isUnlocked: 0
   damage: 250
   attackSpeed: 0.6
-  range: 4
+  range: 2
   numTargets: 1
   damageType: 0
   projectileType: 1

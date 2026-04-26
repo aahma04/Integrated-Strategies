@@ -17,6 +17,9 @@ public class Flamethrower : Tower
     [Header("Path 3")]
     public float lavaPoolDamage;
     public float lavaPoolDuration;
+    public GameObject lavaPoolPrefab;
+
+    private TowerPlacementManager towerPlacementManager;
 
     private GameObject attackNode;
     private AttackRange attackNodeScript;
@@ -30,6 +33,8 @@ public class Flamethrower : Tower
 
         attackEffectMaxScale = attackEffect.gameObject.transform.localScale;
         attackEffectMinScale = new Vector3(0f, attackEffectMaxScale.y, attackEffectMaxScale.z);
+
+        towerPlacementManager = FindFirstObjectByType<TowerPlacementManager>();
     }
 
 
@@ -52,7 +57,7 @@ public class Flamethrower : Tower
 
         Enemy[] enemiesToHit = attackNodeScript.enemiesInRange.ToArray();
 
-        Debug.Log("Enemies hit by flamethrower: " + enemiesToHit.Length);
+        // Debug.Log("Enemies hit by flamethrower: " + enemiesToHit.Length);
         foreach (Enemy enemy in enemiesToHit)
         {
             ApplyAttack(enemy);
@@ -64,9 +69,11 @@ public class Flamethrower : Tower
         }
         else if (specialUnlocked == 3)
         {
+            attackNodeScript.PopulateTilesInRange();
+            // Debug.Log($"tiles in range: {attackNodeScript.tilesInRange.Count}");
             foreach (GameObject pathTile in attackNodeScript.tilesInRange)
             {
-                continue;
+                towerPlacementManager.TryPlaceTrap(WorldToGrid(pathTile.transform.position), pathTile.transform.position, lavaPoolPrefab);
             }
         }
 
@@ -76,12 +83,12 @@ public class Flamethrower : Tower
 
     private void ApplyAttack(Enemy target)
     {
-        Debug.Log("Checking burn for " + target.name);
+        // Debug.Log("Checking burn for " + target.name);
         // Check if target is either not burning or if stacking special unlocked
         if (CountBurnStacks(target) < burnStackLimit)
         {
             target.AddEffect(new Burning(damage, burnDuration, this));
-            Debug.Log("Applied burn to " + target.name);
+            // Debug.Log("Applied burn to " + target.name);
         }
     }
 
@@ -117,5 +124,15 @@ public class Flamethrower : Tower
         }
         yield return new WaitForSeconds(duration/2);
         effectSprite.enabled = false;
+    }
+
+
+    public Vector2Int WorldToGrid(Vector3 worldPos)
+    {
+        int tileSize = 1;
+        return new Vector2Int(
+            Mathf.RoundToInt(worldPos.x / tileSize),
+            Mathf.RoundToInt(worldPos.y / tileSize)
+        );
     }
 }
