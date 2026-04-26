@@ -15,6 +15,7 @@ public class MainMenuController : MonoBehaviour
         {
             tutorialButton.SetActive(false);
         }
+        Debug.Log($"Player Level: {PlayerProgress.playerLevel}, XP: {PlayerProgress.currentXP}");
     }
 
 

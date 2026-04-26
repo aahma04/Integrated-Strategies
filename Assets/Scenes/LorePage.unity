@@ -3605,7 +3605,6 @@ MonoBehaviour:
       Or overwritten.\r\n\r\nThe Core\u2019s still active. It has to be.\r\n\r\nIf
       you\u2019re hearing this, just follow the instructions. Set up defenses. Don\u2019t
       question it too much.\r\n\r\nI tried that already.\u201D\r\n\r\n\u2026\u2026\r\n\r\n\u2026\u2026\r\n"
-    icon: {fileID: 0}
   tape2:
     title: Tape 2
     content: "\u201C\u2026they told us the intruders were external.\r\n\r\nThat\u2019s
@@ -3615,7 +3614,6 @@ MonoBehaviour:
       there.\r\n\r\nMaybe the defenses aren\u2019t keeping them out.\r\n\r\nMaybe
       they\u2019re keeping something \u25A1\u25A1\u25A1.\u201D\r\n\r\n\u2026\u2026\r\n\r\n\u201COr
       keeping us where we\u2019re suptojkefvjewGDFVWIEI\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u25A1\u201D\r\n\r\n\u2026\u2026\r\n"
-    icon: {fileID: 0}
   tape3:
     title: Tape 3
     content: "\u201C\u2026I finally reached the Core chamber.\r\n\r\nIt\u2019s not
@@ -3625,7 +3623,6 @@ MonoBehaviour:
       like it doesn\u2019t need protection.\u201D\r\n\r\n\u2026\u2026\r\n\r\n\u201CI
       saw my reflection on the surface.\r\n\r\nIt didn\u2019t\u2026 move when I did.\u201D\r\n\r\n\u2026\u2026\r\n\r\n\u201C\u2026I
       don\u2019t think that was me.\u201D\r\n\r\n\u2026\u2026\r\n"
-    icon: {fileID: 0}
   document1:
     title: Internal Memorandum (Summary)
     content: 'Recent observations indicate irregular system behavior within the facility.
@@ -3636,7 +3633,6 @@ MonoBehaviour:
       until further review is completed.
 
 '
-    icon: {fileID: 0}
   document2:
     title: Security Notice (Summary)
     content: All staff are reminded that access to designated sectors remains limited
@@ -3644,7 +3640,6 @@ MonoBehaviour:
       have not been substantiated; however, standard defensive measures are to remain
       active at all times. In the event of intrusion, priority is to prevent approach
       to the Core. Additional resources should be allocated as necessary.
-    icon: {fileID: 0}
   document3:
     title: 'Emergency Directive (Summary) '
     content: If containment integrity is compromised, all available resources must
@@ -3652,7 +3647,6 @@ MonoBehaviour:
       authorized. Previous instructions may no longer apply under current conditions.
       Maintain defensive systems and respond to threats as they appear. Further guidance
       will be issued if communication remains stable.
-    icon: {fileID: 0}
   newspaper1:
     title: Infrastructure Advisory Notice
     content: City officials have acknowledged ongoing concerns regarding intermittent
@@ -3665,7 +3659,6 @@ MonoBehaviour:
       in communication networks coinciding with the sirens. Requests for further
       clarification have not been addressed. Officials continue to advise the public
       to disregard the disturbances and avoid restricted access points.
-    icon: {fileID: 0}
   newspaper2:
     title: Unverified Reports Prompt Inquiry
     content: An internal review has been requested following multiple unverified
@@ -3678,7 +3671,6 @@ MonoBehaviour:
       have declined to comment on whether these anomalies indicate technical malfunction
       or administrative error. The organization maintains that all systems remain
       within operational parameters.
-    icon: {fileID: 0}
   newspaper3:
     title: Restricted Zone Expansion
     content: Authorities have extended the boundaries of a previously designated
@@ -3690,7 +3682,6 @@ MonoBehaviour:
       noise from the site, accompanied by occasional low-frequency vibrations. Despite
       inquiries from local representatives, no additional details have been released.
       The restriction is expected to remain in place indefinitely.
-    icon: {fileID: 0}
   journal:
     title: XX-XX-XXXX
     content: "I woke up again today.\r\n\r\nI think it was morning. There\u2019s
@@ -3708,12 +3699,21 @@ MonoBehaviour:
       something in the reflection, but it didn\u2019t last long enough to understand.\r\n\r\nI
       don\u2019t know how long I\u2019ve been here.\r\n\r\nBut I\u2019m starting
       to think leaving was never the point.\r\n"
-    icon: {fileID: 0}
+  btnTape1: {fileID: 727027109}
+  btnTape2: {fileID: 725147654}
+  btnTape3: {fileID: 318089161}
+  btnDocument1: {fileID: 1502716209}
+  btnDocument2: {fileID: 178700736}
+  btnDocument3: {fileID: 583348488}
+  btnNewspaper1: {fileID: 1935780136}
+  btnNewspaper2: {fileID: 1231019679}
+  btnNewspaper3: {fileID: 291699769}
+  btnJournal: {fileID: 1357472125}
   detailPanel: {fileID: 200188278}
-  detailIcon: {fileID: 0}
   detailTitle: {fileID: 1774571195}
   detailContent: {fileID: 716433574}
   closeButton: {fileID: 1877416373}
+  lockedPanel: {fileID: 0}
 --- !u!4 &1694952200
 Transform:
   m_ObjectHideFlags: 0
