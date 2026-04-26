@@ -562,7 +562,7 @@ MonoBehaviour:
   towerName: Rapid Fire
   towerType: Rapid Fire
   description: Shoots very quickly
-  cost: 0
+  cost: 20
   towerColor: {r: 1, g: 1, b: 1, a: 1}
   isUnlocked: 0
   damage: 150

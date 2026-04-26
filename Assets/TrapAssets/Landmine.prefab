@@ -286,7 +286,7 @@ MonoBehaviour:
   trapName: Landmine
   trapType: Landmine
   description: Explodes when stepped on, damaging enemies in a small area.
-  cost: 0
+  cost: 20
   trapColor: {r: 0, g: 0, b: 0, a: 0}
   damage: 400
   range: 1

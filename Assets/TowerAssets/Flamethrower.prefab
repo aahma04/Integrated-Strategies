@@ -565,7 +565,7 @@ MonoBehaviour:
   towerName: Flamethrower
   towerType: Flamethrower
   description: Throws flame
-  cost: 30
+  cost: 80
   towerColor: {r: 1, g: 0, b: 0, a: 1}
   isUnlocked: 0
   damage: 50

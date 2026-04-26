@@ -286,7 +286,7 @@ MonoBehaviour:
   trapName: Timed Stun Grenade
   trapType: Timed Stun Grenade
   description: Explodes after a delay, damaging and stunning nearby enemies.
-  cost: 0
+  cost: 20
   trapColor: {r: 0, g: 0, b: 0, a: 0}
   damage: 10
   range: 3

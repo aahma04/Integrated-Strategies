@@ -141,7 +141,7 @@ MonoBehaviour:
   trapName: Bear Trap
   trapType: Bear Trap
   description: Clamps down on an enemy, damaging and stunning them.
-  cost: 0
+  cost: 10
   trapColor: {r: 0, g: 0, b: 0, a: 0}
   damage: 100
   range: 1

@@ -286,11 +286,11 @@ MonoBehaviour:
   trapName: Nuke
   trapType: Nuke
   description: Deals massive damage to all enemies
-  cost: 0
+  cost: 67
   trapColor: {r: 0, g: 0, b: 0, a: 0}
-  damage: 9999
-  range: 0
-  duration: 5
+  damage: 67
+  range: 67
+  duration: 67
   damageType: 2
   placementType: 2
   onGround: 0

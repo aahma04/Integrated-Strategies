@@ -5,24 +5,34 @@ using TMPro;
 public class MainMenuController : MonoBehaviour
 {
     public GameObject mainCanvas;
-    public GameObject tutorialButton;
+    public GameObject[] tutorialButtons;
+
+    private int currentTutorialIndex = -1;
 
     public void Start()
     {
-        tutorialButton.SetActive(false);
+        foreach(GameObject tutorialButton in tutorialButtons)
+        {
+            tutorialButton.SetActive(false);
+        }
     }
 
 
-    public void LoadTutorial()
+    public void LoadNextTutorial()
     {
-        tutorialButton.SetActive(true);
+        currentTutorialIndex++;
+
+        if (currentTutorialIndex < tutorialButtons.Length)
+        {
+            tutorialButtons[currentTutorialIndex].SetActive(true);
+        }
+        else
+        {
+            SceneManager.LoadScene("Level");
+            Time.timeScale = 1f;
+        }
     }
 
-    public void Play()
-    {
-        SceneManager.LoadScene("Level");
-        Time.timeScale = 1f;
-    }
 
     public void OpenLorePage()
     {

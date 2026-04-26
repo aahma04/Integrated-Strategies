@@ -569,7 +569,7 @@ MonoBehaviour:
   towerName: Shotgun
   towerType: Shotgun
   description: Shoots a spread of bullets
-  cost: 80
+  cost: 30
   towerColor: {r: 0, g: 0.14117648, b: 1, a: 1}
   isUnlocked: 0
   damage: 250
