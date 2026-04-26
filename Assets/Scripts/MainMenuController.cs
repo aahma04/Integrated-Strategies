@@ -7,6 +7,8 @@ public class MainMenuController : MonoBehaviour
     public GameObject mainCanvas;
     public GameObject[] tutorialButtons;
 
+    public GameObject ResetDataPanel;
+
     private int currentTutorialIndex = -1;
 
     public void Start()
@@ -15,6 +17,8 @@ public class MainMenuController : MonoBehaviour
         {
             tutorialButton.SetActive(false);
         }
+        ResetDataPanel.SetActive(false);
+
         Debug.Log($"Player Level: {PlayerProgress.playerLevel}, XP: {PlayerProgress.currentXP}");
     }
 
@@ -32,6 +36,25 @@ public class MainMenuController : MonoBehaviour
             SceneManager.LoadScene("Level");
             Time.timeScale = 1f;
         }
+    }
+
+
+    public void ResetDataPrompt()
+    {
+        ResetDataPanel.SetActive(true);
+    }
+
+
+    public void ConfirmResetData()
+    {
+        PlayerPrefs.DeleteAll();
+        ResetDataPanel.SetActive(false);
+    }
+
+
+    public void DenyResetData()
+    {
+        ResetDataPanel.SetActive(false);
     }
 
 
